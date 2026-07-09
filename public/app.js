@@ -39,8 +39,6 @@ function viewLabel() {
 
 function requiredMissing() {
   const missing = [];
-  if (!customerNameEl.value.trim()) missing.push("お客さん名");
-  if (!orderNumberEl.value.trim()) missing.push("注文番号");
   if (!textEl.value.trim()) missing.push("語録の区切り");
   return missing;
 }
