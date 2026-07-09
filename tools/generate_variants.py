@@ -47,10 +47,36 @@ def column_size(item: dict, base: int) -> tuple:
     return font, width, gap, width, height
 
 
+def split_columns(lines: list[str]) -> list[str]:
+    if len(lines) <= 3:
+        return lines + [""] * (3 - len(lines))
+
+    total = sum(len(line) for line in lines)
+    target = max(1, total / 3)
+    groups: list[list[str]] = [[], [], []]
+    group_index = 0
+    current_count = 0
+
+    for idx, line in enumerate(lines):
+        remaining_lines = len(lines) - idx
+        remaining_groups = 3 - group_index
+        should_move = (
+            group_index < 2
+            and groups[group_index]
+            and current_count >= target
+            and remaining_lines >= remaining_groups
+        )
+        if should_move:
+            group_index += 1
+            current_count = 0
+        groups[group_index].append(line)
+        current_count += len(line)
+
+    return ["".join(group).strip() for group in groups]
+
+
 def variant_specs(lines: list[str]) -> dict[str, list[dict]]:
-    while len(lines) < 3:
-        lines.append("")
-    right, center, left = lines[:3]
+    right, center, left = split_columns(lines)
     return {
         "A_center": [
             {"text": right, "scale": 1.22, "x": 0.703, "y": 0.499, "sx": 1.08, "sy": 0.96, "angle": 0},
