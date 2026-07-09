@@ -53,24 +53,22 @@ def split_columns(lines: list[str]) -> list[str]:
 
     total = sum(len(line) for line in lines)
     target = max(1, total / 3)
-    groups: list[list[str]] = [[], [], []]
-    group_index = 0
-    current_count = 0
 
-    for idx, line in enumerate(lines):
-        remaining_lines = len(lines) - idx
-        remaining_groups = 3 - group_index
-        should_move = (
-            group_index < 2
-            and groups[group_index]
-            and current_count >= target
-            and remaining_lines >= remaining_groups
-        )
-        if should_move:
-            group_index += 1
-            current_count = 0
-        groups[group_index].append(line)
-        current_count += len(line)
+    best_cuts = (1, 2)
+    best_score = float("inf")
+    for first in range(1, len(lines) - 1):
+        for second in range(first + 1, len(lines)):
+            groups_for_score = [lines[:first], lines[first:second], lines[second:]]
+            lengths = [sum(len(line) for line in group) for group in groups_for_score]
+            line_counts = [len(group) for group in groups_for_score]
+            score = sum((length - target) ** 2 for length in lengths)
+            score += max(line_counts) - min(line_counts)
+            if score < best_score:
+                best_score = score
+                best_cuts = (first, second)
+
+    first, second = best_cuts
+    groups: list[list[str]] = [lines[:first], lines[first:second], lines[second:]]
 
     return ["".join(group).strip() for group in groups]
 
