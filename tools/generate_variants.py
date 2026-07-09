@@ -47,50 +47,57 @@ def column_size(item: dict, base: int) -> tuple:
     return font, width, gap, width, height
 
 
-def split_columns(lines: list[str]) -> list[str]:
-    if len(lines) <= 3:
-        return lines + [""] * (3 - len(lines))
+def column_x_positions(count: int, left: float = 0.18, right: float = 0.82) -> list[float]:
+    if count <= 1:
+        return [0.50]
+    step = (right - left) / (count - 1)
+    return [right - step * index for index in range(count)]
 
-    total = sum(len(line) for line in lines)
-    target = max(1, total / 3)
 
-    best_cuts = (1, 2)
-    best_score = float("inf")
-    for first in range(1, len(lines) - 1):
-        for second in range(first + 1, len(lines)):
-            groups_for_score = [lines[:first], lines[first:second], lines[second:]]
-            lengths = [sum(len(line) for line in group) for group in groups_for_score]
-            line_counts = [len(group) for group in groups_for_score]
-            score = sum((length - target) ** 2 for length in lengths)
-            score += max(line_counts) - min(line_counts)
-            if score < best_score:
-                best_score = score
-                best_cuts = (first, second)
-
-    first, second = best_cuts
-    groups: list[list[str]] = [lines[:first], lines[first:second], lines[second:]]
-
-    return ["".join(group).strip() for group in groups]
+def make_spec(lines: list[str], variant: str) -> list[dict]:
+    count = max(1, len(lines))
+    positions = column_x_positions(count)
+    center = (count - 1) / 2
+    spec = []
+    for index, text in enumerate(lines):
+        distance = abs(index - center) / max(1, center)
+        if variant == "A_center":
+            scale = 1.46 - distance * 0.18
+            y = 0.50 + ((index % 3) - 1) * 0.035
+            sx = 1.02 + (0.04 if index % 2 == 0 else -0.02)
+            sy = 1.03 - (0.04 if index % 2 == 0 else 0)
+            angle = 0
+        elif variant == "B_stagger":
+            scale = 1.40 - distance * 0.12 + (0.06 if index % 2 else 0)
+            y = 0.50 + ((index % 4) - 1.5) * 0.045
+            sx = 0.98 + (index % 3) * 0.035
+            sy = 1.08 - (index % 2) * 0.08
+            angle = [3, -2, 2, -3][index % 4]
+        else:
+            scale = 1.50 - distance * 0.15 + (0.08 if index == round(center) else 0)
+            y = 0.50 + ((index % 5) - 2) * 0.025
+            sx = 1.08 - (index % 2) * 0.07
+            sy = 0.98 + (index % 3) * 0.035
+            angle = [-2, 2, -1, 3, -3][index % 5]
+        spec.append(
+            {
+                "text": text,
+                "scale": scale,
+                "x": positions[index],
+                "y": y,
+                "sx": sx,
+                "sy": sy,
+                "angle": angle,
+            }
+        )
+    return spec
 
 
 def variant_specs(lines: list[str]) -> dict[str, list[dict]]:
-    right, center, left = split_columns(lines)
     return {
-        "A_center": [
-            {"text": right, "scale": 1.22, "x": 0.703, "y": 0.499, "sx": 1.08, "sy": 0.96, "angle": 0},
-            {"text": center, "scale": 1.58, "x": 0.482, "y": 0.467, "sx": 0.98, "sy": 1.05, "angle": 0},
-            {"text": left, "scale": 1.34, "x": 0.277, "y": 0.565, "sx": 1.04, "sy": 1.00, "angle": 0},
-        ],
-        "B_stagger": [
-            {"text": right, "scale": 1.28, "x": 0.70, "y": 0.43, "sx": 0.95, "sy": 1.10, "angle": 3},
-            {"text": center, "scale": 1.54, "x": 0.50, "y": 0.51, "sx": 1.08, "sy": 0.96, "angle": -2},
-            {"text": left, "scale": 1.36, "x": 0.32, "y": 0.59, "sx": 1.00, "sy": 1.05, "angle": 2},
-        ],
-        "C_dense": [
-            {"text": right, "scale": 1.26, "x": 0.68, "y": 0.47, "sx": 1.12, "sy": 0.94, "angle": -2},
-            {"text": center, "scale": 1.64, "x": 0.49, "y": 0.50, "sx": 0.95, "sy": 1.10, "angle": 3},
-            {"text": left, "scale": 1.42, "x": 0.32, "y": 0.55, "sx": 1.08, "sy": 0.98, "angle": -3},
-        ],
+        "A_center": make_spec(lines, "A_center"),
+        "B_stagger": make_spec(lines, "B_stagger"),
+        "C_dense": make_spec(lines, "C_dense"),
     }
 
 
@@ -115,6 +122,15 @@ def fit(canvas: tuple[int, int], spec: list[dict]) -> list[tuple]:
                 ok = False
                 break
             data.append((item, font, char_w, gap, padded_w, padded_h, cx, cy))
+        if ok:
+            ordered = sorted(data, key=lambda entry: entry[6])
+            min_gap = max(18, canvas[0] * 0.006)
+            for left_entry, right_entry in zip(ordered, ordered[1:]):
+                left_edge = left_entry[6] + left_entry[4] / 2
+                right_edge = right_entry[6] - right_entry[4] / 2
+                if left_edge + min_gap > right_edge:
+                    ok = False
+                    break
         if ok:
             return data
     raise RuntimeError("layout fit failed")
