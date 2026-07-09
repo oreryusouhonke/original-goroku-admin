@@ -42,7 +42,7 @@ def column_size(item: dict, base: int) -> tuple:
         glyph_h = box[3] - box[1]
         width = max(width, glyph_w)
         sizes.append((glyph_w, glyph_h))
-    gap = max(8, int(font.size * 0.045))
+    gap = max(18, int(font.size * 0.075))
     height = sum(glyph_h for _, glyph_h in sizes) + gap * max(0, len(sizes) - 1)
     return font, width, gap, width, height
 
@@ -152,10 +152,10 @@ def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path) -> None:
     if bbox:
         ink = image.crop(bbox)
         target_w = int(canvas[0] * 0.96)
-        target_h = int(canvas[1] * 0.96)
+        target_h = int(canvas[1] * 0.92)
         uniform = min(target_w / ink.width, target_h / ink.height)
         scale_x = min(target_w / ink.width, uniform * 1.25)
-        scale_y = min(target_h / ink.height, uniform * 1.25)
+        scale_y = min(target_h / ink.height, uniform * 1.08)
         if scale_x > 1 or scale_y > 1:
             resized = ink.resize((int(ink.width * scale_x), int(ink.height * scale_y)), Image.Resampling.BICUBIC)
             image = Image.new("RGBA", canvas, (0, 0, 0, 0))
@@ -184,10 +184,10 @@ def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path) -> None:
         raw_w = max(1, max_x - min_x)
         raw_h = max(1, max_y - min_y)
         target_w = int(canvas[0] * 0.96)
-        target_h = int(canvas[1] * 0.96)
+        target_h = int(canvas[1] * 0.92)
         uniform = min(target_w / raw_w, target_h / raw_h)
         group_sx = min(target_w / raw_w, uniform * 1.25)
-        group_sy = min(target_h / raw_h, uniform * 1.25)
+        group_sy = min(target_h / raw_h, uniform * 1.08)
         group_tx = (canvas[0] - raw_w * group_sx) / 2 - min_x * group_sx
         group_ty = (canvas[1] - raw_h * group_sy) / 2 - min_y * group_sy
     else:
