@@ -1,4 +1,3 @@
-const titleEl = document.querySelector("#title");
 const customerNameEl = document.querySelector("#customerName");
 const orderNumberEl = document.querySelector("#orderNumber");
 const textEl = document.querySelector("#text");
@@ -43,6 +42,15 @@ function requiredMissing() {
   return missing;
 }
 
+function displayTitle() {
+  const customerName = customerNameEl.value.trim();
+  const orderNumber = orderNumberEl.value.trim();
+  if (customerName && orderNumber) return `${customerName}-${orderNumber}`;
+  if (customerName) return customerName;
+  if (orderNumber) return orderNumber;
+  return textEl.value.trim().replace(/\s+/g, "");
+}
+
 function render() {
   if (!current) return;
   const items = view === "horizontal" ? current.horizontal : current.vertical;
@@ -80,7 +88,7 @@ async function generate() {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        title: titleEl.value.trim() || textEl.value.trim().replace(/\s+/g, ""),
+        title: displayTitle(),
         text: textEl.value,
       }),
     });
@@ -133,7 +141,6 @@ async function saveDecision(selected) {
 
 generateEl.addEventListener("click", generate);
 clearEl.addEventListener("click", () => {
-  titleEl.value = "";
   customerNameEl.value = "";
   orderNumberEl.value = "";
   textEl.value = "";
