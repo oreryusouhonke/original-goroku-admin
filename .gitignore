@@ -1,0 +1,6 @@
+.deps/
+node_modules/
+preview_latest/
+npm-debug.log
+.env
+*.local

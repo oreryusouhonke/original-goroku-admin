@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: original-goroku-admin
+    env: docker
+    plan: starter
+    autoDeploy: false
+    disk:
+      name: goroku-data
+      mountPath: /data
+      sizeGB: 10
+    envVars:
+      - key: PORT
+        value: 8792
+      - key: PYTHON
+        value: python3
+      - key: DATA_ROOT
+        value: /data
+      - key: BASIC_USER
+        sync: false
+      - key: BASIC_PASSWORD
+        sync: false

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>オリジナル語録 作成画面</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace">
+        <aside class="panel">
+          <div class="brand">
+            <span>オリジナル語録Tシャツ</span>
+            <strong>作成画面</strong>
+          </div>
+
+          <div class="steps">
+            <div class="step active"><b>1</b><span>入力</span></div>
+            <div class="step"><b>2</b><span>3案確認</span></div>
+            <div class="step"><b>3</b><span>採用保存</span></div>
+          </div>
+
+          <label>
+            <span>お客さん名</span>
+            <input id="customerName" placeholder="例: 山田太郎" autocomplete="off" />
+          </label>
+
+          <label>
+            <span>注文番号</span>
+            <input id="orderNumber" placeholder="例: 10001234" autocomplete="off" />
+          </label>
+
+          <label>
+            <span>管理名</span>
+            <input id="title" placeholder="例: スマホより世の中みろよ" autocomplete="off" />
+          </label>
+
+          <label>
+            <span>語録の区切り</span>
+            <textarea id="text" spellcheck="false">スマホより
+世の中
+みろよ</textarea>
+          </label>
+
+          <div class="actions">
+            <button id="generate" class="primary">3案を作る</button>
+            <button id="clear" class="ghost">入力を消す</button>
+          </div>
+
+          <div id="status" class="status">左の項目を入力して「3案を作る」を押してください。</div>
+        </aside>
+
+        <section class="results">
+          <div class="toolbar">
+            <div>
+              <span class="eyebrow">確認</span>
+              <h1>良い案を選んで「採用」を押す</h1>
+            </div>
+            <div class="segmented" role="tablist" aria-label="A4向き">
+              <button class="active" data-view="horizontal">横A4</button>
+              <button data-view="vertical">縦A4</button>
+            </div>
+          </div>
+
+          <div id="grid" class="grid empty">
+            <p>ここに3案が表示されます。</p>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
