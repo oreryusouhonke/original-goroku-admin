@@ -47,7 +47,7 @@ def column_size(item: dict, base: int) -> tuple:
     return font, width, gap, width, height
 
 
-def column_x_positions(count: int, left: float = 0.18, right: float = 0.82) -> list[float]:
+def column_x_positions(count: int, left: float = 0.28, right: float = 0.72) -> list[float]:
     if count <= 1:
         return [0.50]
     step = (right - left) / (count - 1)
