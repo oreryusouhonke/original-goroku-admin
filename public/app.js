@@ -5,7 +5,9 @@ const generateEl = document.querySelector("#generate");
 const clearEl = document.querySelector("#clear");
 const statusEl = document.querySelector("#status");
 const gridEl = document.querySelector("#grid");
+const copySavePathEl = document.querySelector("#copySavePath");
 const stepEls = document.querySelectorAll(".step");
+const SAVE_PATH = "\\\\LS220DD5E\\share\\オリジナル語録デザイン自動生成";
 
 let current = null;
 
@@ -151,4 +153,13 @@ gridEl.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-select]");
   if (!button) return;
   saveDecision(button.dataset.select);
+});
+
+copySavePathEl?.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(SAVE_PATH);
+    setStatus("保存場所のパスをコピーしました。", "ok");
+  } catch {
+    setStatus(SAVE_PATH, "ok");
+  }
 });

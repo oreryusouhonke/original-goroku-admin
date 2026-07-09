@@ -38,6 +38,8 @@ body {
   height: calc(100vh - 36px);
   position: sticky;
   top: 18px;
+  display: flex;
+  flex-direction: column;
 }
 
 .brand {
@@ -175,6 +177,51 @@ button:disabled { opacity: .55; cursor: wait; }
 
 .status.ok { color: var(--ok); border-color: #2c6b48; }
 .status.error { color: var(--error); border-color: #7a332b; }
+
+.save-location {
+  margin-top: auto;
+  padding-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.save-location span {
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.save-location a,
+.path-copy {
+  display: block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  padding: 11px 12px;
+  color: #17110d;
+  background: var(--gold);
+  font-weight: 900;
+}
+
+.path-copy {
+  border: 1px solid var(--line);
+  background: #231a16;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.save-location code {
+  display: block;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #080706;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 
 .download-links {
   display: flex;
