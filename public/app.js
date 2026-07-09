@@ -5,11 +5,9 @@ const generateEl = document.querySelector("#generate");
 const clearEl = document.querySelector("#clear");
 const statusEl = document.querySelector("#status");
 const gridEl = document.querySelector("#grid");
-const tabButtons = document.querySelectorAll(".segmented button");
 const stepEls = document.querySelectorAll(".step");
 
 let current = null;
-let view = "horizontal";
 
 function setStatus(message, type = "") {
   statusEl.textContent = message;
@@ -32,10 +30,6 @@ function labelFor(name) {
   return name.replace(/\.png$/i, "");
 }
 
-function viewLabel() {
-  return view === "horizontal" ? "横A4" : "縦A4";
-}
-
 function requiredMissing() {
   const missing = [];
   if (!textEl.value.trim()) missing.push("語録の区切り");
@@ -53,24 +47,26 @@ function displayTitle() {
 
 function render() {
   if (!current) return;
-  const items = view === "horizontal" ? current.horizontal : current.vertical;
-  gridEl.className = `grid ${view === "vertical" ? "vertical" : ""}`;
+  const items = [
+    ...current.horizontal.map((item) => ({ ...item, view: "horizontal", viewName: "横A4" })),
+    ...current.vertical.map((item) => ({ ...item, view: "vertical", viewName: "縦A4" })),
+  ];
+  gridEl.className = "grid";
   gridEl.innerHTML = items.map((item) => `
-    <article class="card">
+    <article class="card ${item.view}">
       <header>
         <h2>${labelFor(item.name)}</h2>
-        <span>${viewLabel()}</span>
+        <span>${item.viewName}</span>
       </header>
       <img src="${item.url}" alt="${labelFor(item.name)}" />
       <footer>
-        <button class="adopt" data-select="${view}:${item.name}">この案を採用</button>
+        <button class="adopt" data-select="${item.view}:${item.name}">この案を採用</button>
         <a href="${item.url}" target="_blank" rel="noreferrer">PNG</a>
         <a href="${item.svgUrl}" target="_blank" rel="noreferrer">SVG</a>
       </footer>
     </article>
   `).join("");
 }
-
 async function generate() {
   const missing = requiredMissing();
   if (missing.length) {
@@ -149,15 +145,6 @@ clearEl.addEventListener("click", () => {
   gridEl.innerHTML = "<p>ここに3案が表示されます。</p>";
   setStatus("入力を消しました。");
   setStep(0);
-});
-
-tabButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    tabButtons.forEach((item) => item.classList.remove("active"));
-    button.classList.add("active");
-    view = button.dataset.view;
-    render();
-  });
 });
 
 gridEl.addEventListener("click", (event) => {

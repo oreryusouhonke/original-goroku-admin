@@ -275,7 +275,7 @@ h1 {
   object-fit: contain;
 }
 
-.vertical .card img { aspect-ratio: 3 / 4; }
+.card.vertical img { aspect-ratio: 3 / 4; }
 
 .card footer {
   display: grid;
