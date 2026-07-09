@@ -194,10 +194,8 @@ def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path) -> None:
         target_w = int(canvas[0] * 0.96)
         target_h = int(canvas[1] * 0.96)
         uniform = min(target_w / ink.width, target_h / ink.height)
-        scale_x = min(target_w / ink.width, uniform * 1.25)
-        scale_y = min(target_h / ink.height, uniform * 1.25)
-        if scale_x > 1 or scale_y > 1:
-            resized = ink.resize((int(ink.width * scale_x), int(ink.height * scale_y)), Image.Resampling.BICUBIC)
+        if uniform > 1:
+            resized = ink.resize((int(ink.width * uniform), int(ink.height * uniform)), Image.Resampling.BICUBIC)
             image = Image.new("RGBA", canvas, (0, 0, 0, 0))
             image.alpha_composite(resized, ((canvas[0] - resized.width) // 2, (canvas[1] - resized.height) // 2))
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -226,8 +224,8 @@ def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path) -> None:
         target_w = int(canvas[0] * 0.96)
         target_h = int(canvas[1] * 0.96)
         uniform = min(target_w / raw_w, target_h / raw_h)
-        group_sx = min(target_w / raw_w, uniform * 1.25)
-        group_sy = min(target_h / raw_h, uniform * 1.25)
+        group_sx = uniform
+        group_sy = uniform
         group_tx = (canvas[0] - raw_w * group_sx) / 2 - min_x * group_sx
         group_ty = (canvas[1] - raw_h * group_sy) / 2 - min_y * group_sy
     else:
