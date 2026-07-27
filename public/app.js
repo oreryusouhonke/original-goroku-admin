@@ -35,6 +35,19 @@ const nextEngineSafetyEl = document.querySelector("#nextEngineSafety");
 const selectionBoxEl = document.querySelector("#selectionBox");
 const resizeHandleEl = selectionBoxEl.querySelector(".resize-handle");
 const rotateHandleEl = selectionBoxEl.querySelector(".rotate-handle");
+const emailActionsEl = document.querySelector("#emailActions");
+const openEmailPreviewEl = document.querySelector("#openEmailPreview");
+const emailDialogEl = document.querySelector("#emailDialog");
+const closeEmailDialogEl = document.querySelector("#closeEmailDialog");
+const cancelEmailEl = document.querySelector("#cancelEmail");
+const customerEmailEl = document.querySelector("#customerEmail");
+const emailCustomerNameEl = document.querySelector("#emailCustomerName");
+const emailOrderNumberEl = document.querySelector("#emailOrderNumber");
+const emailPhraseEl = document.querySelector("#emailPhrase");
+const emailPreviewGridEl = document.querySelector("#emailPreviewGrid");
+const emailConfirmedEl = document.querySelector("#emailConfirmed");
+const sendCustomerEmailEl = document.querySelector("#sendCustomerEmail");
+const emailStatusEl = document.querySelector("#emailStatus");
 const SAVE_PATH = "\\\\LS220DD5E\\share\\オリジナル語録デザイン自動生成";
 
 let current = null;
@@ -44,6 +57,7 @@ let selectedCharacterIndex = -1;
 let dragState = null;
 let transformState = null;
 let currentOrder = null;
+let adoptedItem = null;
 
 function setUsageCount(count) {
   usageCountEl.textContent = Number(count || 0).toLocaleString("ja-JP");
@@ -156,6 +170,66 @@ function render() {
       </footer>
     </article>
   `).join("");
+  emailActionsEl.hidden = !adoptedItem;
+}
+
+function selectedEmailItems() {
+  return adoptedItem ? [adoptedItem] : [];
+}
+
+function setEmailStatus(message, type = "") {
+  emailStatusEl.textContent = message;
+  emailStatusEl.className = `status ${type}`;
+}
+
+function openEmailPreview() {
+  const items = selectedEmailItems();
+  if (items.length !== 1) return setStatus("先に送信する案の「この案を採用」を押してください。", "error");
+  customerEmailEl.value = currentOrder?.email || "";
+  emailCustomerNameEl.textContent = customerNameEl.value.trim() || "未入力";
+  emailOrderNumberEl.textContent = orderNumberEl.value.trim() || "未入力";
+  emailPhraseEl.textContent = textEl.value.trim();
+  emailPreviewGridEl.innerHTML = items.map((item) => `
+    <figure>
+      <figcaption>${labelFor(item.name)}</figcaption>
+      <img src="${item.url}" alt="${labelFor(item.name)}の送信プレビュー" />
+    </figure>
+  `).join("");
+  emailConfirmedEl.checked = false;
+  sendCustomerEmailEl.disabled = true;
+  setEmailStatus("内容を確認してチェックを入れてください。");
+  emailDialogEl.showModal();
+}
+
+async function sendCustomerEmail() {
+  if (!emailConfirmedEl.checked) return;
+  const items = selectedEmailItems();
+  sendCustomerEmailEl.disabled = true;
+  sendCustomerEmailEl.textContent = "送信中…";
+  setEmailStatus("白背景PNGへ変換して送信しています。");
+  try {
+    const response = await fetch("/api/customer-email", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        slug: current.slug,
+        files: items.map((item) => item.name),
+        email: customerEmailEl.value.trim(),
+        customerName: customerNameEl.value.trim(),
+        orderNumber: orderNumberEl.value.trim(),
+        phrase: textEl.value.trim(),
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "メール送信に失敗しました。");
+    setEmailStatus(`${data.recipient} へ採用案を送信しました。`, "ok");
+    setStatus("お客様へのデザイン確認メールを送信しました。", "ok");
+    sendCustomerEmailEl.textContent = "送信済み";
+  } catch (error) {
+    setEmailStatus(error.message, "error");
+    sendCustomerEmailEl.disabled = false;
+    sendCustomerEmailEl.textContent = "確認した採用案を送信";
+  }
 }
 
 function resetEditorControls() {
@@ -435,6 +509,8 @@ async function generate() {
   }
 
   generateEl.disabled = true;
+  adoptedItem = null;
+  emailActionsEl.hidden = true;
   setStatus("3案を作成中です。少しお待ちください。");
   setStep(1);
 
@@ -486,6 +562,9 @@ async function saveDecision(selected) {
     setStep(1);
     return;
   }
+  const [, selectedFilename] = selected.split(":");
+  adoptedItem = current.square.find((item) => item.name === selectedFilename) || null;
+  emailActionsEl.hidden = !adoptedItem;
   setStatusHtml(`
     <div>保存できました。必要なら下のボタンから開けます。</div>
     <div class="download-links">
@@ -502,9 +581,11 @@ clearEl.addEventListener("click", () => {
   textEl.value = "";
   current = null;
   currentOrder = null;
+  adoptedItem = null;
   orderInfoEl.hidden = true;
   gridEl.className = "grid empty";
   gridEl.innerHTML = "<p>ここに3案が表示されます。</p>";
+  emailActionsEl.hidden = true;
   setStatus("入力を消しました。");
   setStep(0);
 });
@@ -578,6 +659,13 @@ lookupOrderEl.addEventListener("click", lookupOrder);
 resetEditorEl.addEventListener("click", resetEditorControls);
 closeEditorEl.addEventListener("click", () => editorDialogEl.close());
 applyEditorEl.addEventListener("click", applyEditor);
+openEmailPreviewEl.addEventListener("click", openEmailPreview);
+closeEmailDialogEl.addEventListener("click", () => emailDialogEl.close());
+cancelEmailEl.addEventListener("click", () => emailDialogEl.close());
+emailConfirmedEl.addEventListener("change", () => {
+  sendCustomerEmailEl.disabled = !emailConfirmedEl.checked;
+});
+sendCustomerEmailEl.addEventListener("click", sendCustomerEmail);
 
 loadUsageCount();
 loadNextEngineStatus();

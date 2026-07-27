@@ -1,9 +1,10 @@
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 import { createReadStream, existsSync } from "node:fs";
-import { copyFile, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import nodemailer from "nodemailer";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -24,7 +25,13 @@ const NEXT_ENGINE_REDIRECT_URI = process.env.NEXT_ENGINE_REDIRECT_URI
   || "https://original-goroku-admin.onrender.com/api/next-engine/callback";
 const NEXT_ENGINE_MODE = process.env.NEXT_ENGINE_MODE === "sandbox" ? "sandbox" : "production";
 const NEXT_ENGINE_READ_ONLY = true;
-const CUSTOMER_EMAIL_ENABLED = false;
+const CUSTOMER_EMAIL_ENABLED = process.env.CUSTOMER_EMAIL_ENABLED === "true";
+const SMTP_HOST = process.env.SMTP_HOST || "";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
+const SMTP_SECURE = process.env.SMTP_SECURE === "true";
+const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || "";
+const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
 const PYTHON = process.env.PYTHON || "python";
 const BASIC_USER = process.env.BASIC_USER || "";
 const BASIC_PASSWORD = process.env.BASIC_PASSWORD || "";
@@ -486,6 +493,94 @@ async function handleDecision(req, res) {
   }
 }
 
+function validEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+}
+
+function resolveGeneratedPng(slugValue, filenameValue) {
+  const slug = safeSlug(slugValue);
+  const filename = path.basename(String(filenameValue || ""));
+  if (!filename.toLowerCase().endsWith(".png")) return "";
+  const baseDir = path.join(OUTPUT_ROOT, slug, "\u6b63\u65b9\u5f62");
+  const target = path.normalize(path.join(baseDir, filename));
+  return target.startsWith(baseDir) && existsSync(target) ? target : "";
+}
+
+async function flattenPngOnWhite(source, target) {
+  const script = [
+    "from PIL import Image",
+    "import sys",
+    "src, dst = sys.argv[1], sys.argv[2]",
+    "im = Image.open(src).convert('RGBA')",
+    "bg = Image.new('RGB', im.size, (255,255,255))",
+    "bg.paste(im, mask=im.getchannel('A'))",
+    "bg.save(dst, 'PNG', optimize=True)",
+  ].join("\n");
+  await new Promise((resolve, reject) => {
+    const child = spawn(PYTHON, ["-c", script, source, target], { cwd: __dirname, windowsHide: true });
+    let stderr = "";
+    child.stderr.on("data", (data) => (stderr += data));
+    child.on("close", (code) => code === 0 ? resolve() : reject(new Error(stderr || "PNG変換に失敗しました。")));
+  });
+}
+
+async function handleCustomerEmail(req, res) {
+  const temporaryFiles = [];
+  try {
+    if (!CUSTOMER_EMAIL_ENABLED) {
+      return json(res, 503, { error: "メール送信はまだ有効化されていません。" });
+    }
+    if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !SMTP_FROM) {
+      return json(res, 503, { error: "メール送信設定が未完了です。" });
+    }
+    const body = await readJsonBody(req);
+    const recipient = String(body.email || "").trim();
+    const orderNumber = String(body.orderNumber || "").trim();
+    const customerName = String(body.customerName || "お客様").trim();
+    const phrase = String(body.phrase || "").trim();
+    const files = Array.isArray(body.files) ? [...new Set(body.files.map(String))].slice(0, 1) : [];
+    if (!validEmail(recipient)) return json(res, 400, { error: "送信先メールアドレスを確認してください。" });
+    if (!orderNumber) return json(res, 400, { error: "注文番号が必要です。" });
+    if (!phrase) return json(res, 400, { error: "語録を確認できません。" });
+    if (files.length !== 1) return json(res, 400, { error: "採用した1案を確認できません。" });
+
+    const sources = files.map((filename) => resolveGeneratedPng(body.slug, filename));
+    if (sources.some((source) => !source)) {
+      return json(res, 400, { error: "画面に表示中の画像を確認できません。3案を作り直してください。" });
+    }
+
+    const mailDir = path.join(OUTPUT_ROOT, safeSlug(body.slug), "mail");
+    await mkdir(mailDir, { recursive: true });
+    const attachments = [];
+    for (let index = 0; index < sources.length; index += 1) {
+      const target = path.join(mailDir, `${Date.now()}_\u63a1\u7528\u6848_\u767d\u80cc\u666f.png`);
+      await flattenPngOnWhite(sources[index], target);
+      temporaryFiles.push(target);
+      attachments.push({ filename: "\u63a1\u7528\u30c7\u30b6\u30a4\u30f3_\u767d\u80cc\u666f.png", path: target, contentType: "image/png" });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_SECURE,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+    });
+    await transporter.verify();
+    const info = await transporter.sendMail({
+      from: SMTP_FROM,
+      to: recipient,
+      subject: `\u3010\u4ffa\u6d41\u7dcf\u672c\u5bb6\u3011\u30aa\u30ea\u30b8\u30ca\u30eb\u8a9e\u9332T\u30b7\u30e3\u30c4 \u30c7\u30b6\u30a4\u30f3\u306e\u3054\u78ba\u8a8d\uff08${orderNumber}\uff09`,
+      text: `${customerName} \u69d8\n\n\u3054\u6ce8\u6587\u3044\u305f\u3060\u3044\u305f\u30aa\u30ea\u30b8\u30ca\u30eb\u8a9e\u9332T\u30b7\u30e3\u30c4\u306e\u30c7\u30b6\u30a4\u30f3\u3092\u304a\u9001\u308a\u3057\u307e\u3059\u3002\n\n\u8a9e\u9332\uff1a\n${phrase}\n\n\u6dfb\u4ed8\u306e\u30c7\u30b6\u30a4\u30f3\u3092\u3054\u78ba\u8a8d\u304f\u3060\u3055\u3044\u3002\n\n\u3054\u6ce8\u6587\u756a\u53f7\uff1a${orderNumber}\n\n\u4ffa\u6d41\u7dcf\u672c\u5bb6`,
+      attachments,
+    });
+    json(res, 200, { ok: true, messageId: info.messageId, recipient });
+  } catch (error) {
+    json(res, 500, { error: `\u30e1\u30fc\u30eb\u9001\u4fe1\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002${String(error.message || error)}` });
+  } finally {
+    await Promise.all(temporaryFiles.map((file) => unlink(file).catch(() => {})));
+  }
+}
+
 async function serveOutput(req, res) {
   const prefix = "/outputs/";
   const raw = decodeURIComponent(req.url.slice(prefix.length));
@@ -532,6 +627,7 @@ const server = createServer(async (req, res) => {
   if (req.method === "POST" && req.url === "/api/generate") return handleGenerate(req, res);
   if (req.method === "POST" && req.url === "/api/edit") return handleEdit(req, res);
   if (req.method === "POST" && req.url === "/api/decision") return handleDecision(req, res);
+  if (req.method === "POST" && req.url === "/api/customer-email") return handleCustomerEmail(req, res);
   if (req.method === "GET" && req.url.startsWith("/outputs/")) return serveOutput(req, res);
   if (req.method === "GET" && req.url.startsWith("/approved/")) return serveApproved(req, res);
   return serveStatic(req, res);

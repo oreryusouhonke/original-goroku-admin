@@ -388,6 +388,54 @@ h1 {
   object-fit: contain;
 }
 
+.email-actions {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  background: #17120f;
+  text-align: center;
+}
+
+.email-actions button { min-width: 280px; }
+.email-actions p { margin: 9px 0 0; color: var(--muted); font-size: 13px; }
+
+.email-dialog {
+  width: min(1180px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+}
+
+.email-dialog::backdrop { background: rgba(0, 0, 0, .82); }
+.email-panel { display: grid; max-height: calc(100vh - 34px); }
+.email-panel > header, .email-panel > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+}
+.email-panel > header { border-bottom: 1px solid var(--line); }
+.email-panel > footer { justify-content: flex-end; border-top: 1px solid var(--line); }
+.email-panel h2 { margin: 3px 0 0; }
+.email-body { padding: 18px; overflow: auto; }
+.email-recipient { display: grid; grid-template-columns: minmax(280px, 1fr) 1.5fr; gap: 18px; }
+.email-recipient label { margin-top: 0; }
+.email-recipient dl { margin: 0; display: grid; gap: 6px; }
+.email-recipient dl div { display: grid; grid-template-columns: 90px 1fr; gap: 10px; }
+.email-recipient dt { color: var(--gold); font-weight: 800; }
+.email-recipient dd { margin: 0; white-space: pre-line; }
+.email-preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+.email-preview-grid figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
+.email-preview-grid figcaption { padding: 9px; background: #231a16; color: var(--text); font-weight: 900; }
+.email-preview-grid img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; }
+.email-confirm { grid-template-columns: 24px 1fr; align-items: center; margin: 18px 0; padding: 14px; border: 1px solid var(--gold); border-radius: 8px; }
+.email-confirm input { width: 22px; height: 22px; }
+
 .card footer {
   display: grid;
   grid-template-columns: 76px 1fr 58px 58px;
@@ -673,4 +721,5 @@ h1 {
   .toolbar { align-items: stretch; flex-direction: column; }
   .editor-body { grid-template-columns: 1fr; }
   .editor-preview { min-height: 300px; }
+  .email-recipient, .email-preview-grid { grid-template-columns: 1fr; }
 }

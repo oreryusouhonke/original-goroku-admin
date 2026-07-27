@@ -80,6 +80,10 @@
           <div id="grid" class="grid empty">
             <p>ここに3案が表示されます。</p>
           </div>
+          <div id="emailActions" class="email-actions" hidden>
+            <button id="openEmailPreview" type="button">採用案をお客様へメール</button>
+            <p>「この案を採用」で保存した1案だけを送信します。</p>
+          </div>
         </section>
       </section>
     </main>
@@ -158,6 +162,41 @@
         <footer>
           <button id="resetEditor" type="button" class="ghost">調整を戻す</button>
           <button id="applyEditor" type="button">修正版を作る</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="emailDialog" class="email-dialog">
+      <form method="dialog" class="email-panel">
+        <header>
+          <div>
+            <span class="eyebrow">誤送信防止の最終確認</span>
+            <h2>この採用案をお客様へ送ります</h2>
+          </div>
+          <button id="closeEmailDialog" type="button" class="editor-close" aria-label="確認画面を閉じる">×</button>
+        </header>
+        <div class="email-body">
+          <div class="email-recipient">
+            <label>
+              <span>送信先メールアドレス</span>
+              <input id="customerEmail" type="email" autocomplete="off" />
+            </label>
+            <dl>
+              <div><dt>お客様名</dt><dd id="emailCustomerName"></dd></div>
+              <div><dt>注文番号</dt><dd id="emailOrderNumber"></dd></div>
+              <div><dt>語録</dt><dd id="emailPhrase"></dd></div>
+            </dl>
+          </div>
+          <div id="emailPreviewGrid" class="email-preview-grid"></div>
+          <label class="email-confirm">
+            <input id="emailConfirmed" type="checkbox" />
+            <span>宛先・注文番号・語録・採用画像が正しいことを確認しました</span>
+          </label>
+          <div id="emailStatus" class="status">内容を確認してチェックを入れてください。</div>
+        </div>
+        <footer>
+          <button id="cancelEmail" type="button" class="ghost">戻る</button>
+          <button id="sendCustomerEmail" type="button" disabled>確認した採用案を送信</button>
         </footer>
       </form>
     </dialog>
