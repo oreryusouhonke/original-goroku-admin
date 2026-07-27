@@ -28,6 +28,9 @@ const charXEl = document.querySelector("#charX");
 const charYEl = document.querySelector("#charY");
 const charRotationEl = document.querySelector("#charRotation");
 const resetCharacterEl = document.querySelector("#resetCharacter");
+const lookupOrderEl = document.querySelector("#lookupOrder");
+const connectNextEngineEl = document.querySelector("#connectNextEngine");
+const orderInfoEl = document.querySelector("#orderInfo");
 const selectionBoxEl = document.querySelector("#selectionBox");
 const resizeHandleEl = selectionBoxEl.querySelector(".resize-handle");
 const rotateHandleEl = selectionBoxEl.querySelector(".rotate-handle");
@@ -39,6 +42,7 @@ let characterEdits = [];
 let selectedCharacterIndex = -1;
 let dragState = null;
 let transformState = null;
+let currentOrder = null;
 
 function setUsageCount(count) {
   usageCountEl.textContent = Number(count || 0).toLocaleString("ja-JP");
@@ -52,6 +56,42 @@ async function loadUsageCount() {
     setUsageCount(data.count);
   } catch {
     usageCountEl.textContent = "--";
+  }
+}
+
+async function loadNextEngineStatus() {
+  try {
+    const response = await fetch("/api/next-engine/status");
+    const data = await response.json();
+    connectNextEngineEl.hidden = data.connected;
+    lookupOrderEl.disabled = !data.connected;
+    lookupOrderEl.textContent = data.connected ? "注文情報を取得" : "NE連携後に取得";
+  } catch {
+    lookupOrderEl.disabled = true;
+  }
+}
+
+async function lookupOrder() {
+  const orderNumber = orderNumberEl.value.trim();
+  if (!orderNumber) return setStatus("注文番号を入力してください。", "error");
+  lookupOrderEl.disabled = true;
+  lookupOrderEl.textContent = "検索中…";
+  try {
+    const response = await fetch(`/api/next-engine/order?orderNumber=${encodeURIComponent(orderNumber)}`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "注文情報を取得できませんでした。");
+    currentOrder = data;
+    customerNameEl.value = data.customerName || "";
+    orderNumberEl.value = data.orderNumber || orderNumber;
+    orderInfoEl.hidden = false;
+    orderInfoEl.textContent = `${data.customerName || "購入者名なし"} / ${data.email || "メールなし"}`;
+    setStatus("ネクストエンジンから注文情報を取得しました。", "ok");
+  } catch (error) {
+    orderInfoEl.hidden = true;
+    setStatus(error.message, "error");
+  } finally {
+    lookupOrderEl.disabled = false;
+    lookupOrderEl.textContent = "注文情報を取得";
   }
 }
 
@@ -455,6 +495,8 @@ clearEl.addEventListener("click", () => {
   orderNumberEl.value = "";
   textEl.value = "";
   current = null;
+  currentOrder = null;
+  orderInfoEl.hidden = true;
   gridEl.className = "grid empty";
   gridEl.innerHTML = "<p>ここに3案が表示されます。</p>";
   setStatus("入力を消しました。");
@@ -526,8 +568,10 @@ resetCharacterEl.addEventListener("click", () => {
   updateCharacterControls();
   applyCharacterPreview(selectedCharacterIndex);
 });
+lookupOrderEl.addEventListener("click", lookupOrder);
 resetEditorEl.addEventListener("click", resetEditorControls);
 closeEditorEl.addEventListener("click", () => editorDialogEl.close());
 applyEditorEl.addEventListener("click", applyEditor);
 
 loadUsageCount();
+loadNextEngineStatus();

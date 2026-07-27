@@ -17,6 +17,11 @@ const DEFAULT_DELIVERY_ROOT = process.platform === "win32"
 const DELIVERY_ROOT = process.env.DELIVERY_ROOT || DEFAULT_DELIVERY_ROOT;
 const DECISIONS_PATH = path.join(DATA_ROOT, "\u7ba1\u7406\u753b\u9762_\u63a1\u7528\u30e1\u30e2.json");
 const USAGE_PATH = path.join(DATA_ROOT, "\u7ba1\u7406\u753b\u9762_\u5229\u7528\u56de\u6570.json");
+const NEXT_ENGINE_AUTH_PATH = path.join(DATA_ROOT, "next-engine-auth.json");
+const NEXT_ENGINE_CLIENT_ID = process.env.NEXT_ENGINE_CLIENT_ID || "";
+const NEXT_ENGINE_CLIENT_SECRET = process.env.NEXT_ENGINE_CLIENT_SECRET || "";
+const NEXT_ENGINE_REDIRECT_URI = process.env.NEXT_ENGINE_REDIRECT_URI
+  || "https://original-goroku-admin.onrender.com/api/next-engine/callback";
 const PYTHON = process.env.PYTHON || "python";
 const BASIC_USER = process.env.BASIC_USER || "";
 const BASIC_PASSWORD = process.env.BASIC_PASSWORD || "";
@@ -90,6 +95,125 @@ async function listPngs(dir, webPrefix) {
         svgUrl: `${webPrefix}/${encodeURIComponent(`${base}.svg`)}`,
       };
     });
+}
+
+async function readNextEngineAuth() {
+  if (!existsSync(NEXT_ENGINE_AUTH_PATH)) return null;
+  try {
+    return JSON.parse(await readFile(NEXT_ENGINE_AUTH_PATH, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+async function nextEngineApi(endpoint, params) {
+  const auth = await readNextEngineAuth();
+  if (!auth?.access_token) throw new Error("ネクストエンジンが未連携です。");
+  const response = await fetch(`https://api.next-engine.org${endpoint}`, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      access_token: auth.access_token,
+      refresh_token: auth.refresh_token || "",
+      wait_flag: "1",
+      ...params,
+    }),
+  });
+  const data = await response.json();
+  if (data.access_token && data.refresh_token) {
+    await writeFile(
+      NEXT_ENGINE_AUTH_PATH,
+      JSON.stringify({ ...auth, access_token: data.access_token, refresh_token: data.refresh_token, updatedAt: new Date().toISOString() }, null, 2),
+      "utf-8",
+    );
+  }
+  if (data.result !== "success") throw new Error(data.message || "ネクストエンジンAPIでエラーが発生しました。");
+  return data;
+}
+
+function handleNextEngineConnect(_req, res) {
+  if (!NEXT_ENGINE_CLIENT_ID) return json(res, 503, { error: "ネクストエンジンのクライアントIDが未設定です。" });
+  const target = new URL("https://base.next-engine.org/users/sign_in/");
+  target.searchParams.set("client_id", NEXT_ENGINE_CLIENT_ID);
+  target.searchParams.set("redirect_uri", NEXT_ENGINE_REDIRECT_URI);
+  res.writeHead(302, { location: target.toString(), "cache-control": "no-store" });
+  res.end();
+}
+
+async function handleNextEngineCallback(req, res) {
+  try {
+    if (!NEXT_ENGINE_CLIENT_ID || !NEXT_ENGINE_CLIENT_SECRET) throw new Error("ネクストエンジンのAPI認証情報が未設定です。");
+    const url = new URL(req.url, "https://local.invalid");
+    const uid = url.searchParams.get("uid");
+    const state = url.searchParams.get("state");
+    if (!uid || !state) throw new Error("ネクストエンジンの認証情報を受け取れませんでした。");
+    const response = await fetch("https://api.next-engine.org/api_neauth", {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        uid,
+        state,
+        client_id: NEXT_ENGINE_CLIENT_ID,
+        client_secret: NEXT_ENGINE_CLIENT_SECRET,
+      }),
+    });
+    const data = await response.json();
+    if (data.result !== "success") throw new Error(data.message || "ネクストエンジン認証に失敗しました。");
+    await writeFile(
+      NEXT_ENGINE_AUTH_PATH,
+      JSON.stringify({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        company_ne_id: data.company_ne_id,
+        company_name: data.company_name,
+        connectedAt: new Date().toISOString(),
+      }, null, 2),
+      "utf-8",
+    );
+    res.writeHead(302, { location: "/?nextEngine=connected", "cache-control": "no-store" });
+    res.end();
+  } catch (error) {
+    send(res, 500, String(error.message || error), "text/plain; charset=utf-8");
+  }
+}
+
+async function handleNextEngineStatus(_req, res) {
+  const auth = await readNextEngineAuth();
+  json(res, 200, {
+    configured: Boolean(NEXT_ENGINE_CLIENT_ID && NEXT_ENGINE_CLIENT_SECRET),
+    connected: Boolean(auth?.access_token),
+    companyName: auth?.company_name || "",
+  });
+}
+
+async function handleNextEngineOrder(req, res) {
+  try {
+    const url = new URL(req.url, "https://local.invalid");
+    const orderNumber = String(url.searchParams.get("orderNumber") || "").trim();
+    if (!orderNumber) return json(res, 400, { error: "注文番号を入力してください。" });
+    const data = await nextEngineApi("/api_v1_receiveorder_base/search", {
+      fields: [
+        "receive_order_id",
+        "receive_order_shop_cut_form_id",
+        "receive_order_purchaser_name",
+        "receive_order_purchaser_mail_address",
+        "receive_order_shop_id",
+      ].join(","),
+      "receive_order_shop_cut_form_id-eq": orderNumber,
+    });
+    const order = Array.isArray(data.data) ? data.data[0] : null;
+    if (!order) return json(res, 404, { error: "該当する注文が見つかりませんでした。" });
+    json(res, 200, {
+      orderId: order.receive_order_id,
+      orderNumber: order.receive_order_shop_cut_form_id,
+      customerName: order.receive_order_purchaser_name,
+      email: order.receive_order_purchaser_mail_address,
+      shopId: order.receive_order_shop_id,
+      shopName: "",
+    });
+  } catch (error) {
+    json(res, 500, { error: String(error.message || error) });
+  }
 }
 
 async function readUsageCount() {
@@ -393,7 +517,11 @@ async function serveStatic(req, res) {
 }
 
 const server = createServer(async (req, res) => {
+  if (req.method === "GET" && req.url.startsWith("/api/next-engine/callback")) return handleNextEngineCallback(req, res);
   if (!authorized(req)) return requireAuth(res);
+  if (req.method === "GET" && req.url === "/api/next-engine/connect") return handleNextEngineConnect(req, res);
+  if (req.method === "GET" && req.url === "/api/next-engine/status") return handleNextEngineStatus(req, res);
+  if (req.method === "GET" && req.url.startsWith("/api/next-engine/order?")) return handleNextEngineOrder(req, res);
   if (req.method === "GET" && req.url === "/api/usage") return handleUsage(req, res);
   if (req.method === "POST" && req.url === "/api/generate") return handleGenerate(req, res);
   if (req.method === "POST" && req.url === "/api/edit") return handleEdit(req, res);

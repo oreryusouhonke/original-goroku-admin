@@ -37,6 +37,11 @@
             <span>注文番号（空欄OK）</span>
             <input id="orderNumber" placeholder="例: 10001234" autocomplete="off" />
           </label>
+          <div class="order-lookup">
+            <button id="lookupOrder" type="button" class="ghost">注文情報を取得</button>
+            <a id="connectNextEngine" href="/api/next-engine/connect">ネクストエンジンと連携</a>
+          </div>
+          <div id="orderInfo" class="order-info" hidden></div>
 
           <label>
             <span>語録の区切り</span>

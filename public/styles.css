@@ -164,6 +164,40 @@ textarea {
 
 input:focus, textarea:focus { border-color: var(--gold); }
 
+.order-lookup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.order-lookup button,
+.order-lookup a {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #231a16;
+  color: var(--text);
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.order-info {
+  margin-top: 8px;
+  padding: 9px 10px;
+  border: 1px solid #2c6b48;
+  border-radius: 6px;
+  color: var(--ok);
+  background: #0d1812;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
 .actions {
   display: grid;
   grid-template-columns: 1fr 120px;
