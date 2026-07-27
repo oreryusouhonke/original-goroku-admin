@@ -101,6 +101,23 @@ def variant_specs(lines: list[str]) -> dict[str, list[dict]]:
     }
 
 
+def apply_edits(spec: list[dict], edit: dict) -> list[dict]:
+    scale = max(0.4, min(1.8, float(edit.get("scale", 1))))
+    offset_x = max(-0.35, min(0.35, float(edit.get("offsetX", 0))))
+    offset_y = max(-0.35, min(0.35, float(edit.get("offsetY", 0))))
+    rotation = max(-20, min(20, float(edit.get("rotation", 0))))
+    spacing = max(0.65, min(1.5, float(edit.get("spacing", 1))))
+    center = (len(spec) - 1) / 2
+    for index, item in enumerate(spec):
+        item["scale"] *= scale
+        item["x"] = max(0.06, min(0.94, item["x"] + offset_x))
+        item["y"] = max(0.06, min(0.94, item["y"] + offset_y))
+        item["angle"] += rotation
+        if len(spec) > 1:
+            item["x"] += (center - index) * (spacing - 1) * 0.12
+    return spec
+
+
 def fit(canvas: tuple[int, int], spec: list[dict]) -> list[tuple]:
     for base in range(1050, 80, -5):
         data = []
@@ -273,12 +290,26 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--request", required=True)
     parser.add_argument("--out", required=True)
+    parser.add_argument("--edit")
     args = parser.parse_args()
 
     request = json.loads(Path(args.request).read_text(encoding="utf-8"))
     lines = [line.strip() for line in request["lines"] if line.strip()]
     specs = variant_specs(lines)
     out = Path(args.out)
+    if args.edit:
+        edit = json.loads(Path(args.edit).read_text(encoding="utf-8"))
+        variant = edit.get("variant", "A_center")
+        orientation = edit.get("orientation", "horizontal")
+        if variant not in specs or orientation not in {"horizontal", "vertical"}:
+            raise ValueError("invalid edit target")
+        canvas = (3600, 2700) if orientation == "horizontal" else (2700, 3600)
+        folder = "\u6a2a" if orientation == "horizontal" else "\u7e26"
+        filename = edit.get("filename", f"{variant}_edit")
+        spec = apply_edits(specs[variant], edit)
+        draw_variant(canvas, spec, out / folder / f"{filename}.png")
+        write_svg(canvas, spec, out / folder / f"{filename}.svg")
+        return
     for name, spec in specs.items():
         draw_variant((3600, 2700), spec, out / "\u6a2a" / f"{name}.png")
         write_svg((3600, 2700), spec, out / "\u6a2a" / f"{name}.svg")

@@ -75,6 +75,53 @@
         </section>
       </section>
     </main>
+
+    <dialog id="editorDialog" class="editor-dialog">
+      <form method="dialog" class="editor-panel">
+        <header>
+          <div>
+            <span class="eyebrow">案を編集</span>
+            <h2 id="editorTitle">文字と配置を調整</h2>
+          </div>
+          <button id="closeEditor" type="button" class="editor-close" aria-label="編集画面を閉じる">×</button>
+        </header>
+        <div class="editor-body">
+          <div class="editor-preview">
+            <img id="editorPreview" alt="編集中の案" />
+          </div>
+          <div class="editor-controls">
+            <label>
+              <span>文字・改行</span>
+              <textarea id="editorText" spellcheck="false"></textarea>
+            </label>
+            <label>
+              <span>文字サイズ <output id="scaleValue">100%</output></span>
+              <input id="editorScale" type="range" min="40" max="180" value="100" />
+            </label>
+            <label>
+              <span>左右位置 <output id="xValue">0</output></span>
+              <input id="editorX" type="range" min="-30" max="30" value="0" />
+            </label>
+            <label>
+              <span>上下位置 <output id="yValue">0</output></span>
+              <input id="editorY" type="range" min="-30" max="30" value="0" />
+            </label>
+            <label>
+              <span>文字列の間隔 <output id="spacingValue">100%</output></span>
+              <input id="editorSpacing" type="range" min="65" max="150" value="100" />
+            </label>
+            <label>
+              <span>傾き <output id="rotationValue">0°</output></span>
+              <input id="editorRotation" type="range" min="-20" max="20" value="0" />
+            </label>
+          </div>
+        </div>
+        <footer>
+          <button id="resetEditor" type="button" class="ghost">調整を戻す</button>
+          <button id="applyEditor" type="button">修正版を作る</button>
+        </footer>
+      </form>
+    </dialog>
     <script src="/app.js"></script>
   </body>
 </html>

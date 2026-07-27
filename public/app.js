@@ -8,9 +8,22 @@ const gridEl = document.querySelector("#grid");
 const copySavePathEl = document.querySelector("#copySavePath");
 const usageCountEl = document.querySelector("#usageCount");
 const stepEls = document.querySelectorAll(".step");
+const editorDialogEl = document.querySelector("#editorDialog");
+const editorTitleEl = document.querySelector("#editorTitle");
+const editorPreviewEl = document.querySelector("#editorPreview");
+const editorTextEl = document.querySelector("#editorText");
+const editorScaleEl = document.querySelector("#editorScale");
+const editorXEl = document.querySelector("#editorX");
+const editorYEl = document.querySelector("#editorY");
+const editorSpacingEl = document.querySelector("#editorSpacing");
+const editorRotationEl = document.querySelector("#editorRotation");
+const applyEditorEl = document.querySelector("#applyEditor");
+const resetEditorEl = document.querySelector("#resetEditor");
+const closeEditorEl = document.querySelector("#closeEditor");
 const SAVE_PATH = "\\\\LS220DD5E\\share\\オリジナル語録デザイン自動生成";
 
 let current = null;
+let editTarget = null;
 
 function setUsageCount(count) {
   usageCountEl.textContent = Number(count || 0).toLocaleString("ja-JP");
@@ -78,12 +91,85 @@ function render() {
       </header>
       <img src="${item.url}" alt="${labelFor(item.name)}" />
       <footer>
+        <button class="edit" data-edit="${item.view}:${item.name}">編集</button>
         <button class="adopt" data-select="${item.view}:${item.name}">この案を採用</button>
         <a href="${item.url}" target="_blank" rel="noreferrer">PNG</a>
         <a href="${item.svgUrl}" target="_blank" rel="noreferrer">SVG</a>
       </footer>
     </article>
   `).join("");
+}
+
+function resetEditorControls() {
+  editorScaleEl.value = "100";
+  editorXEl.value = "0";
+  editorYEl.value = "0";
+  editorSpacingEl.value = "100";
+  editorRotationEl.value = "0";
+  updateEditorPreview();
+}
+
+function updateEditorPreview() {
+  const scale = Number(editorScaleEl.value) / 100;
+  const x = Number(editorXEl.value);
+  const y = Number(editorYEl.value);
+  const rotation = Number(editorRotationEl.value);
+  editorPreviewEl.style.transform = `translate(${x}%, ${y}%) scale(${scale}) rotate(${rotation}deg)`;
+  document.querySelector("#scaleValue").value = `${editorScaleEl.value}%`;
+  document.querySelector("#xValue").value = editorXEl.value;
+  document.querySelector("#yValue").value = editorYEl.value;
+  document.querySelector("#spacingValue").value = `${editorSpacingEl.value}%`;
+  document.querySelector("#rotationValue").value = `${editorRotationEl.value}°`;
+}
+
+function openEditor(selected) {
+  if (!current) return;
+  const [orientation, filename] = selected.split(":");
+  const list = orientation === "vertical" ? current.vertical : current.horizontal;
+  const item = list.find((entry) => entry.name === filename);
+  if (!item) return;
+  editTarget = { orientation, item };
+  editorTitleEl.textContent = `${labelFor(filename)}を編集`;
+  editorPreviewEl.src = item.url;
+  editorTextEl.value = current.lines.join("\n");
+  resetEditorControls();
+  editorDialogEl.showModal();
+}
+
+async function applyEditor() {
+  if (!current || !editTarget || !editorTextEl.value.trim()) return;
+  applyEditorEl.disabled = true;
+  applyEditorEl.textContent = "修正版を生成中…";
+  try {
+    const response = await fetch("/api/edit", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        slug: current.slug,
+        variant: editTarget.item.name.replace(/\.png$/i, ""),
+        orientation: editTarget.orientation,
+        text: editorTextEl.value,
+        scale: Number(editorScaleEl.value) / 100,
+        offsetX: Number(editorXEl.value) / 100,
+        offsetY: Number(editorYEl.value) / 100,
+        spacing: Number(editorSpacingEl.value) / 100,
+        rotation: Number(editorRotationEl.value),
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "修正版の生成に失敗しました。");
+    const list = data.orientation === "vertical" ? current.vertical : current.horizontal;
+    list.push(data.item);
+    current.lines = editorTextEl.value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    render();
+    editorDialogEl.close();
+    setStatus("修正版を追加しました。確認して、そのまま採用・保存できます。", "ok");
+  } catch (error) {
+    setStatus(error.message, "error");
+  } finally {
+    applyEditorEl.disabled = false;
+    applyEditorEl.textContent = "修正版を作る";
+  }
 }
 async function generate() {
   const missing = requiredMissing();
@@ -167,6 +253,11 @@ clearEl.addEventListener("click", () => {
 });
 
 gridEl.addEventListener("click", (event) => {
+  const editButton = event.target.closest("button[data-edit]");
+  if (editButton) {
+    openEditor(editButton.dataset.edit);
+    return;
+  }
   const button = event.target.closest("button[data-select]");
   if (!button) return;
   saveDecision(button.dataset.select);
@@ -180,5 +271,12 @@ copySavePathEl?.addEventListener("click", async () => {
     setStatus(SAVE_PATH, "ok");
   }
 });
+
+[editorScaleEl, editorXEl, editorYEl, editorSpacingEl, editorRotationEl].forEach((input) => {
+  input.addEventListener("input", updateEditorPreview);
+});
+resetEditorEl.addEventListener("click", resetEditorControls);
+closeEditorEl.addEventListener("click", () => editorDialogEl.close());
+applyEditorEl.addEventListener("click", applyEditor);
 
 loadUsageCount();

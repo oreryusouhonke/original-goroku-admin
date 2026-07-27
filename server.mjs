@@ -165,6 +165,71 @@ async function handleGenerate(req, res) {
   }
 }
 
+async function handleEdit(req, res) {
+  try {
+    const body = await readJsonBody(req);
+    const slug = safeSlug(body.slug);
+    const lines = String(body.text || "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (!lines.length) return json(res, 400, { error: "文字を入力してください。" });
+
+    const variant = ["A_center", "B_stagger", "C_dense"].find((name) =>
+      String(body.variant || "").startsWith(name),
+    );
+    const orientation = body.orientation === "vertical" ? "vertical" : "horizontal";
+    if (!variant) return json(res, 400, { error: "編集する案を確認できませんでした。" });
+
+    const outDir = path.join(OUTPUT_ROOT, slug);
+    const filename = `${variant}_edit_${Date.now()}`;
+    const payloadPath = path.join(outDir, `${filename}_request.json`);
+    await mkdir(outDir, { recursive: true });
+    await writeFile(payloadPath, JSON.stringify({ lines }, null, 2), "utf-8");
+
+    const edit = {
+      variant,
+      orientation,
+      filename,
+      scale: Number(body.scale) || 1,
+      offsetX: Number(body.offsetX) || 0,
+      offsetY: Number(body.offsetY) || 0,
+      rotation: Number(body.rotation) || 0,
+      spacing: Number(body.spacing) || 1,
+    };
+    const editPath = path.join(outDir, `${filename}_edit.json`);
+    await writeFile(editPath, JSON.stringify(edit, null, 2), "utf-8");
+    const script = path.join(__dirname, "tools", "generate_variants.py");
+    const child = spawn(PYTHON, [script, "--request", payloadPath, "--out", outDir, "--edit", editPath], {
+      cwd: __dirname,
+      windowsHide: true,
+    });
+
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (data) => (stdout += data));
+    child.stderr.on("data", (data) => (stderr += data));
+    child.on("close", (code) => {
+      if (code !== 0) {
+        return json(res, 500, { error: "編集画像の生成に失敗しました。", detail: stderr || stdout });
+      }
+      const folder = orientation === "vertical" ? "%E7%B8%A6" : "%E6%A8%AA";
+      const prefix = `/outputs/${encodeURIComponent(slug)}/${folder}`;
+      json(res, 200, {
+        orientation,
+        item: {
+          name: `${filename}.png`,
+          url: `${prefix}/${encodeURIComponent(`${filename}.png`)}`,
+          svgName: `${filename}.svg`,
+          svgUrl: `${prefix}/${encodeURIComponent(`${filename}.svg`)}`,
+        },
+      });
+    });
+  } catch (error) {
+    json(res, 500, { error: String(error.message || error) });
+  }
+}
+
 async function handleDecision(req, res) {
   try {
     const body = await readJsonBody(req);
@@ -324,6 +389,7 @@ const server = createServer(async (req, res) => {
   if (!authorized(req)) return requireAuth(res);
   if (req.method === "GET" && req.url === "/api/usage") return handleUsage(req, res);
   if (req.method === "POST" && req.url === "/api/generate") return handleGenerate(req, res);
+  if (req.method === "POST" && req.url === "/api/edit") return handleEdit(req, res);
   if (req.method === "POST" && req.url === "/api/decision") return handleDecision(req, res);
   if (req.method === "GET" && req.url.startsWith("/outputs/")) return serveOutput(req, res);
   if (req.method === "GET" && req.url.startsWith("/approved/")) return serveApproved(req, res);
