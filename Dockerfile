@@ -9,7 +9,10 @@ RUN apt-get update \
 COPY requirements.txt ./
 RUN pip3 install --break-system-packages --no-cache-dir -r requirements.txt
 
-COPY package.json server.mjs ./
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+COPY server.mjs ./
 COPY assets ./assets
 COPY public ./public
 COPY tools ./tools
