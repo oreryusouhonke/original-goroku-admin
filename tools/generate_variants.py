@@ -153,7 +153,7 @@ def fit(canvas: tuple[int, int], spec: list[dict]) -> list[tuple]:
     raise RuntimeError("layout fit failed")
 
 
-def placement_data(canvas: tuple[int, int], spec: list[dict]) -> list[dict]:
+def placement_data(canvas: tuple[int, int], spec: list[dict], glyph_edits: list[dict] | None = None) -> list[dict]:
     placed = []
     scratch = ImageDraw.Draw(Image.new("L", (10, 10)))
     for ci, (item, font, char_w, gap, width, height, cx, cy) in enumerate(fit(canvas, spec)):
@@ -180,12 +180,22 @@ def placement_data(canvas: tuple[int, int], spec: list[dict]) -> list[dict]:
                 }
             )
             y += glyph_h + gap
+    for index, item in enumerate(placed):
+        if not glyph_edits or index >= len(glyph_edits):
+            continue
+        edit = glyph_edits[index] or {}
+        glyph_scale = max(0.4, min(2.0, float(edit.get("scale", 1))))
+        item["left"] += max(-0.25, min(0.25, float(edit.get("offsetX", 0)))) * canvas[0]
+        item["top"] += max(-0.25, min(0.25, float(edit.get("offsetY", 0)))) * canvas[1]
+        item["sx"] *= glyph_scale
+        item["sy"] *= glyph_scale
+        item["angle"] += max(-30, min(30, float(edit.get("rotation", 0))))
     return placed
 
 
-def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path) -> None:
+def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None) -> None:
     image = Image.new("RGBA", canvas, (0, 0, 0, 0))
-    for item in placement_data(canvas, spec):
+    for item in placement_data(canvas, spec, glyph_edits):
         glyph_pad = int(item["font"].size * 0.45)
         glyph = Image.new(
             "RGBA",
@@ -228,9 +238,9 @@ def glyph_path(char: str) -> tuple[str, str] | None:
     return pen.getCommands(), glyph_name
 
 
-def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path) -> None:
+def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None) -> None:
     paths = []
-    placed = placement_data(canvas, spec)
+    placed = placement_data(canvas, spec, glyph_edits)
     if placed:
         min_x = min(item["left"] for item in placed)
         min_y = min(item["top"] for item in placed)
@@ -307,8 +317,9 @@ def main() -> None:
         folder = "\u6a2a" if orientation == "horizontal" else "\u7e26"
         filename = edit.get("filename", f"{variant}_edit")
         spec = apply_edits(specs[variant], edit)
-        draw_variant(canvas, spec, out / folder / f"{filename}.png")
-        write_svg(canvas, spec, out / folder / f"{filename}.svg")
+        glyph_edits = edit.get("charEdits") or []
+        draw_variant(canvas, spec, out / folder / f"{filename}.png", glyph_edits)
+        write_svg(canvas, spec, out / folder / f"{filename}.svg", glyph_edits)
         return
     for name, spec in specs.items():
         draw_variant((3600, 2700), spec, out / "\u6a2a" / f"{name}.png")

@@ -196,6 +196,14 @@ async function handleEdit(req, res) {
       offsetY: Number(body.offsetY) || 0,
       rotation: Number(body.rotation) || 0,
       spacing: Number(body.spacing) || 1,
+      charEdits: Array.isArray(body.charEdits)
+        ? body.charEdits.slice(0, 100).map((item) => ({
+            scale: Number(item?.scale) || 1,
+            offsetX: Number(item?.offsetX) || 0,
+            offsetY: Number(item?.offsetY) || 0,
+            rotation: Number(item?.rotation) || 0,
+          }))
+        : [],
     };
     const editPath = path.join(outDir, `${filename}_edit.json`);
     await writeFile(editPath, JSON.stringify(edit, null, 2), "utf-8");

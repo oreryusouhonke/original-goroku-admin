@@ -87,7 +87,8 @@
         </header>
         <div class="editor-body">
           <div class="editor-preview">
-            <img id="editorPreview" alt="編集中の案" />
+            <div id="editorPreview" aria-label="編集中の案"></div>
+            <p class="drag-help">文字をクリックして、そのままドラッグで移動</p>
           </div>
           <div class="editor-controls">
             <label>
@@ -114,6 +115,32 @@
               <span>傾き <output id="rotationValue">0°</output></span>
               <input id="editorRotation" type="range" min="-20" max="20" value="0" />
             </label>
+            <section class="character-editor">
+              <div class="character-heading">
+                <h3>一文字ずつ調整</h3>
+                <span id="selectedCharLabel">文字を選択</span>
+              </div>
+              <div id="characterList" class="character-list" aria-label="調整する文字"></div>
+              <div id="characterControls" class="character-controls">
+                <label>
+                  <span>文字の大きさ <output id="charScaleValue">100%</output></span>
+                  <input id="charScale" type="range" min="40" max="200" value="100" />
+                </label>
+                <label>
+                  <span>文字の左右位置 <output id="charXValue">0</output></span>
+                  <input id="charX" type="range" min="-25" max="25" value="0" />
+                </label>
+                <label>
+                  <span>文字の上下位置 <output id="charYValue">0</output></span>
+                  <input id="charY" type="range" min="-25" max="25" value="0" />
+                </label>
+                <label>
+                  <span>文字の傾き <output id="charRotationValue">0°</output></span>
+                  <input id="charRotation" type="range" min="-30" max="30" value="0" />
+                </label>
+                <button id="resetCharacter" type="button" class="ghost">この文字だけ戻す</button>
+              </div>
+            </section>
           </div>
         </div>
         <footer>

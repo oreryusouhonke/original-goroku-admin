@@ -20,10 +20,21 @@ const editorRotationEl = document.querySelector("#editorRotation");
 const applyEditorEl = document.querySelector("#applyEditor");
 const resetEditorEl = document.querySelector("#resetEditor");
 const closeEditorEl = document.querySelector("#closeEditor");
+const characterListEl = document.querySelector("#characterList");
+const characterControlsEl = document.querySelector("#characterControls");
+const selectedCharLabelEl = document.querySelector("#selectedCharLabel");
+const charScaleEl = document.querySelector("#charScale");
+const charXEl = document.querySelector("#charX");
+const charYEl = document.querySelector("#charY");
+const charRotationEl = document.querySelector("#charRotation");
+const resetCharacterEl = document.querySelector("#resetCharacter");
 const SAVE_PATH = "\\\\LS220DD5E\\share\\オリジナル語録デザイン自動生成";
 
 let current = null;
 let editTarget = null;
+let characterEdits = [];
+let selectedCharacterIndex = -1;
+let dragState = null;
 
 function setUsageCount(count) {
   usageCountEl.textContent = Number(count || 0).toLocaleString("ja-JP");
@@ -106,6 +117,11 @@ function resetEditorControls() {
   editorYEl.value = "0";
   editorSpacingEl.value = "100";
   editorRotationEl.value = "0";
+  if (characterEdits.length) {
+    characterEdits = characterEdits.map(defaultCharacterEdit);
+    editorPreviewEl.querySelectorAll("path[data-char-index]").forEach((_, index) => applyCharacterPreview(index));
+    updateCharacterControls();
+  }
   updateEditorPreview();
 }
 
@@ -114,7 +130,8 @@ function updateEditorPreview() {
   const x = Number(editorXEl.value);
   const y = Number(editorYEl.value);
   const rotation = Number(editorRotationEl.value);
-  editorPreviewEl.style.transform = `translate(${x}%, ${y}%) scale(${scale}) rotate(${rotation}deg)`;
+  const svg = editorPreviewEl.querySelector("svg");
+  if (svg) svg.style.transform = `translate(${x}%, ${y}%) scale(${scale}) rotate(${rotation}deg)`;
   document.querySelector("#scaleValue").value = `${editorScaleEl.value}%`;
   document.querySelector("#xValue").value = editorXEl.value;
   document.querySelector("#yValue").value = editorYEl.value;
@@ -122,7 +139,117 @@ function updateEditorPreview() {
   document.querySelector("#rotationValue").value = `${editorRotationEl.value}°`;
 }
 
-function openEditor(selected) {
+function defaultCharacterEdit() {
+  return { scale: 1, offsetX: 0, offsetY: 0, rotation: 0 };
+}
+
+function characterText() {
+  return editorTextEl.value.replace(/\r?\n/g, "").split("");
+}
+
+function renderCharacterList() {
+  const chars = characterText();
+  characterEdits = chars.map((_, index) => characterEdits[index] || defaultCharacterEdit());
+  characterListEl.innerHTML = chars.map((char, index) =>
+    `<button type="button" data-char-index="${index}" class="${index === selectedCharacterIndex ? "active" : ""}">${char}</button>`,
+  ).join("");
+  if (selectedCharacterIndex >= chars.length) selectedCharacterIndex = chars.length - 1;
+}
+
+function updateCharacterControls() {
+  const chars = characterText();
+  const edit = characterEdits[selectedCharacterIndex];
+  const enabled = selectedCharacterIndex >= 0 && Boolean(edit);
+  characterControlsEl.classList.toggle("disabled", !enabled);
+  [...characterControlsEl.querySelectorAll("input, button")].forEach((el) => (el.disabled = !enabled));
+  selectedCharLabelEl.textContent = enabled ? `「${chars[selectedCharacterIndex]}」を調整中` : "文字を選択";
+  if (!enabled) return;
+  charScaleEl.value = String(Math.round(edit.scale * 100));
+  charXEl.value = String(Math.round(edit.offsetX * 100));
+  charYEl.value = String(Math.round(edit.offsetY * 100));
+  charRotationEl.value = String(Math.round(edit.rotation));
+  document.querySelector("#charScaleValue").value = `${charScaleEl.value}%`;
+  document.querySelector("#charXValue").value = charXEl.value;
+  document.querySelector("#charYValue").value = charYEl.value;
+  document.querySelector("#charRotationValue").value = `${charRotationEl.value}°`;
+}
+
+function applyCharacterPreview(index) {
+  const svg = editorPreviewEl.querySelector("svg");
+  const path = svg?.querySelector(`path[data-char-index="${index}"]`);
+  const edit = characterEdits[index];
+  if (!svg || !path || !edit) return;
+  const rect = svg.getBoundingClientRect();
+  path.style.transform = `translate(${edit.offsetX * rect.width}px, ${edit.offsetY * rect.height}px) scale(${edit.scale}) rotate(${edit.rotation}deg)`;
+  path.classList.toggle("selected-character", index === selectedCharacterIndex);
+}
+
+function selectCharacter(index) {
+  selectedCharacterIndex = index;
+  renderCharacterList();
+  editorPreviewEl.querySelectorAll("path[data-char-index]").forEach((path) => {
+    path.classList.toggle("selected-character", Number(path.dataset.charIndex) === index);
+  });
+  updateCharacterControls();
+}
+
+function readCharacterControls() {
+  if (selectedCharacterIndex < 0) return;
+  characterEdits[selectedCharacterIndex] = {
+    scale: Number(charScaleEl.value) / 100,
+    offsetX: Number(charXEl.value) / 100,
+    offsetY: Number(charYEl.value) / 100,
+    rotation: Number(charRotationEl.value),
+  };
+  updateCharacterControls();
+  applyCharacterPreview(selectedCharacterIndex);
+}
+
+function wireSvgCharacters() {
+  const paths = [...editorPreviewEl.querySelectorAll("svg path")];
+  paths.forEach((path, index) => {
+    path.dataset.charIndex = String(index);
+    path.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      selectCharacter(index);
+      const edit = characterEdits[index];
+      dragState = {
+        index,
+        startX: event.clientX,
+        startY: event.clientY,
+        offsetX: edit.offsetX,
+        offsetY: edit.offsetY,
+      };
+      path.setPointerCapture(event.pointerId);
+    });
+    path.addEventListener("pointermove", (event) => {
+      if (!dragState || dragState.index !== index) return;
+      const svg = editorPreviewEl.querySelector("svg");
+      const rect = svg.getBoundingClientRect();
+      characterEdits[index].offsetX = Math.max(-0.25, Math.min(0.25, dragState.offsetX + (event.clientX - dragState.startX) / rect.width));
+      characterEdits[index].offsetY = Math.max(-0.25, Math.min(0.25, dragState.offsetY + (event.clientY - dragState.startY) / rect.height));
+      applyCharacterPreview(index);
+      updateCharacterControls();
+    });
+    path.addEventListener("pointerup", () => (dragState = null));
+    path.addEventListener("pointercancel", () => (dragState = null));
+  });
+}
+
+async function loadEditorSvg(url) {
+  editorPreviewEl.innerHTML = '<span class="preview-loading">プレビューを準備中…</span>';
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("編集用データを読み込めませんでした。");
+  editorPreviewEl.innerHTML = await response.text();
+  const svg = editorPreviewEl.querySelector("svg");
+  if (!svg) throw new Error("編集用データを確認できませんでした。");
+  svg.removeAttribute("width");
+  svg.removeAttribute("height");
+  wireSvgCharacters();
+  updateEditorPreview();
+}
+
+async function openEditor(selected) {
   if (!current) return;
   const [orientation, filename] = selected.split(":");
   const list = orientation === "vertical" ? current.vertical : current.horizontal;
@@ -130,10 +257,20 @@ function openEditor(selected) {
   if (!item) return;
   editTarget = { orientation, item };
   editorTitleEl.textContent = `${labelFor(filename)}を編集`;
-  editorPreviewEl.src = item.url;
   editorTextEl.value = current.lines.join("\n");
+  characterEdits = characterText().map(defaultCharacterEdit);
+  selectedCharacterIndex = characterEdits.length ? 0 : -1;
+  renderCharacterList();
+  updateCharacterControls();
   resetEditorControls();
   editorDialogEl.showModal();
+  try {
+    await loadEditorSvg(item.svgUrl);
+    selectCharacter(selectedCharacterIndex);
+  } catch (error) {
+    editorDialogEl.close();
+    setStatus(error.message, "error");
+  }
 }
 
 async function applyEditor() {
@@ -154,6 +291,7 @@ async function applyEditor() {
         offsetY: Number(editorYEl.value) / 100,
         spacing: Number(editorSpacingEl.value) / 100,
         rotation: Number(editorRotationEl.value),
+        charEdits: characterEdits,
       }),
     });
     const data = await response.json();
@@ -274,6 +412,23 @@ copySavePathEl?.addEventListener("click", async () => {
 
 [editorScaleEl, editorXEl, editorYEl, editorSpacingEl, editorRotationEl].forEach((input) => {
   input.addEventListener("input", updateEditorPreview);
+});
+[charScaleEl, charXEl, charYEl, charRotationEl].forEach((input) => {
+  input.addEventListener("input", readCharacterControls);
+});
+characterListEl.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-char-index]");
+  if (button) selectCharacter(Number(button.dataset.charIndex));
+});
+editorTextEl.addEventListener("input", () => {
+  renderCharacterList();
+  updateCharacterControls();
+});
+resetCharacterEl.addEventListener("click", () => {
+  if (selectedCharacterIndex < 0) return;
+  characterEdits[selectedCharacterIndex] = defaultCharacterEdit();
+  updateCharacterControls();
+  applyCharacterPreview(selectedCharacterIndex);
 });
 resetEditorEl.addEventListener("click", resetEditorControls);
 closeEditorEl.addEventListener("click", () => editorDialogEl.close());
