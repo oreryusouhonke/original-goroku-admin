@@ -350,11 +350,9 @@ h1 {
   width: 100%;
   display: block;
   background: #fff;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1;
   object-fit: contain;
 }
-
-.card.vertical img { aspect-ratio: 3 / 4; }
 
 .card footer {
   display: grid;

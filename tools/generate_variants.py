@@ -13,6 +13,8 @@ from fontTools.ttLib import TTFont
 
 
 INK = (35, 23, 19, 255)
+SQUARE_CANVAS = (3543, 3543)
+PRINT_DPI = 300
 FONT = Path(__file__).resolve().parents[1] / "assets" / "KONSHIN.TTF"
 TT_FONT = TTFont(str(FONT))
 GLYPH_SET = TT_FONT.getGlyphSet()
@@ -226,7 +228,7 @@ def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_ed
             image = Image.new("RGBA", canvas, (0, 0, 0, 0))
             image.alpha_composite(resized, ((canvas[0] - resized.width) // 2, (canvas[1] - resized.height) // 2))
     path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path)
+    image.save(path, dpi=(PRINT_DPI, PRINT_DPI))
 
 
 def glyph_path(char: str) -> tuple[str, str] | None:
@@ -285,7 +287,7 @@ def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits
         )
     svg = "\n".join(
         [
-            f'<svg xmlns="http://www.w3.org/2000/svg" width="{canvas[0]}" height="{canvas[1]}" viewBox="0 0 {canvas[0]} {canvas[1]}">',
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="300mm" height="300mm" viewBox="0 0 {canvas[0]} {canvas[1]}">',
             f'<g fill="#231713" transform="translate({group_tx:.3f} {group_ty:.3f}) scale({group_sx:.6f} {group_sy:.6f})">',
             *paths,
             "</g>",
@@ -310,11 +312,11 @@ def main() -> None:
     if args.edit:
         edit = json.loads(Path(args.edit).read_text(encoding="utf-8"))
         variant = edit.get("variant", "A_center")
-        orientation = edit.get("orientation", "horizontal")
-        if variant not in specs or orientation not in {"horizontal", "vertical"}:
+        orientation = edit.get("orientation", "square")
+        if variant not in specs or orientation != "square":
             raise ValueError("invalid edit target")
-        canvas = (3600, 2700) if orientation == "horizontal" else (2700, 3600)
-        folder = "\u6a2a" if orientation == "horizontal" else "\u7e26"
+        canvas = SQUARE_CANVAS
+        folder = "\u6b63\u65b9\u5f62"
         filename = edit.get("filename", f"{variant}_edit")
         spec = apply_edits(specs[variant], edit)
         glyph_edits = edit.get("charEdits") or []
@@ -322,10 +324,8 @@ def main() -> None:
         write_svg(canvas, spec, out / folder / f"{filename}.svg", glyph_edits)
         return
     for name, spec in specs.items():
-        draw_variant((3600, 2700), spec, out / "\u6a2a" / f"{name}.png")
-        write_svg((3600, 2700), spec, out / "\u6a2a" / f"{name}.svg")
-        draw_variant((2700, 3600), spec, out / "\u7e26" / f"{name}.png")
-        write_svg((2700, 3600), spec, out / "\u7e26" / f"{name}.svg")
+        draw_variant(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.png")
+        write_svg(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.svg")
 
 
 if __name__ == "__main__":

@@ -93,10 +93,7 @@ function displayTitle() {
 
 function render() {
   if (!current) return;
-  const items = [
-    ...current.horizontal.map((item) => ({ ...item, view: "horizontal", viewName: "横A4" })),
-    ...current.vertical.map((item) => ({ ...item, view: "vertical", viewName: "縦A4" })),
-  ];
+  const items = current.square.map((item) => ({ ...item, view: "square", viewName: "30cm × 30cm" }));
   gridEl.className = "grid";
   gridEl.innerHTML = items.map((item) => `
     <article class="card ${item.view}">
@@ -326,7 +323,7 @@ async function loadEditorSvg(url) {
 async function openEditor(selected) {
   if (!current) return;
   const [orientation, filename] = selected.split(":");
-  const list = orientation === "vertical" ? current.vertical : current.horizontal;
+  const list = current.square;
   const item = list.find((entry) => entry.name === filename);
   if (!item) return;
   editTarget = { orientation, item };
@@ -370,7 +367,7 @@ async function applyEditor() {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "修正版の生成に失敗しました。");
-    const list = data.orientation === "vertical" ? current.vertical : current.horizontal;
+    const list = current.square;
     list.push(data.item);
     current.lines = editorTextEl.value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     render();

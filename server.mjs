@@ -155,10 +155,9 @@ async function handleGenerate(req, res) {
       if (code !== 0) {
         return json(res, 500, { error: "\u751f\u6210\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002", detail: stderr || stdout });
       }
-      const horizontal = await listPngs(path.join(outDir, "\u6a2a"), `/outputs/${encodeURIComponent(slug)}/%E6%A8%AA`);
-      const vertical = await listPngs(path.join(outDir, "\u7e26"), `/outputs/${encodeURIComponent(slug)}/%E7%B8%A6`);
+      const square = await listPngs(path.join(outDir, "\u6b63\u65b9\u5f62"), `/outputs/${encodeURIComponent(slug)}/%E6%AD%A3%E6%96%B9%E5%BD%A2`);
       const usageCount = await incrementUsageCount();
-      json(res, 200, { slug, title, lines, horizontal, vertical, usageCount });
+      json(res, 200, { slug, title, lines, square, usageCount });
     });
   } catch (error) {
     json(res, 500, { error: String(error.message || error) });
@@ -178,7 +177,7 @@ async function handleEdit(req, res) {
     const variant = ["A_center", "B_stagger", "C_dense"].find((name) =>
       String(body.variant || "").startsWith(name),
     );
-    const orientation = body.orientation === "vertical" ? "vertical" : "horizontal";
+    const orientation = "square";
     if (!variant) return json(res, 400, { error: "編集する案を確認できませんでした。" });
 
     const outDir = path.join(OUTPUT_ROOT, slug);
@@ -221,7 +220,7 @@ async function handleEdit(req, res) {
       if (code !== 0) {
         return json(res, 500, { error: "編集画像の生成に失敗しました。", detail: stderr || stdout });
       }
-      const folder = orientation === "vertical" ? "%E7%B8%A6" : "%E6%A8%AA";
+      const folder = "%E6%AD%A3%E6%96%B9%E5%BD%A2";
       const prefix = `/outputs/${encodeURIComponent(slug)}/${folder}`;
       json(res, 200, {
         orientation,
@@ -242,7 +241,7 @@ async function handleDecision(req, res) {
   try {
     const body = await readJsonBody(req);
     const [orientation, filename] = String(body.selected || "").split(":");
-    const orientationFolder = orientation === "vertical" ? "\u7e26" : "\u6a2a";
+    const orientationFolder = "\u6b63\u65b9\u5f62";
     const slug = safeSlug(body.slug || "selected");
     const title = body.title || slug;
     const customerName = body.customerName || "";
