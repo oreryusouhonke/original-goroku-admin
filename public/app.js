@@ -28,6 +28,9 @@ const charXEl = document.querySelector("#charX");
 const charYEl = document.querySelector("#charY");
 const charRotationEl = document.querySelector("#charRotation");
 const resetCharacterEl = document.querySelector("#resetCharacter");
+const selectionBoxEl = document.querySelector("#selectionBox");
+const resizeHandleEl = selectionBoxEl.querySelector(".resize-handle");
+const rotateHandleEl = selectionBoxEl.querySelector(".rotate-handle");
 const SAVE_PATH = "\\\\LS220DD5E\\share\\オリジナル語録デザイン自動生成";
 
 let current = null;
@@ -35,6 +38,7 @@ let editTarget = null;
 let characterEdits = [];
 let selectedCharacterIndex = -1;
 let dragState = null;
+let transformState = null;
 
 function setUsageCount(count) {
   usageCountEl.textContent = Number(count || 0).toLocaleString("ja-JP");
@@ -137,6 +141,7 @@ function updateEditorPreview() {
   document.querySelector("#yValue").value = editorYEl.value;
   document.querySelector("#spacingValue").value = `${editorSpacingEl.value}%`;
   document.querySelector("#rotationValue").value = `${editorRotationEl.value}°`;
+  requestAnimationFrame(updateSelectionBox);
 }
 
 function defaultCharacterEdit() {
@@ -174,14 +179,31 @@ function updateCharacterControls() {
   document.querySelector("#charRotationValue").value = `${charRotationEl.value}°`;
 }
 
+function updateSelectionBox() {
+  const path = editorPreviewEl.querySelector(`path[data-char-index="${selectedCharacterIndex}"]`);
+  if (!path || editorDialogEl.open === false) {
+    selectionBoxEl.hidden = true;
+    return;
+  }
+  const previewRect = selectionBoxEl.parentElement.getBoundingClientRect();
+  const pathRect = path.getBoundingClientRect();
+  selectionBoxEl.hidden = false;
+  selectionBoxEl.style.left = `${pathRect.left - previewRect.left}px`;
+  selectionBoxEl.style.top = `${pathRect.top - previewRect.top}px`;
+  selectionBoxEl.style.width = `${pathRect.width}px`;
+  selectionBoxEl.style.height = `${pathRect.height}px`;
+}
+
 function applyCharacterPreview(index) {
   const svg = editorPreviewEl.querySelector("svg");
   const path = svg?.querySelector(`path[data-char-index="${index}"]`);
+  const transformGroup = svg?.querySelector(`g[data-char-transform="${index}"]`);
   const edit = characterEdits[index];
-  if (!svg || !path || !edit) return;
-  const rect = svg.getBoundingClientRect();
-  path.style.transform = `translate(${edit.offsetX * rect.width}px, ${edit.offsetY * rect.height}px) scale(${edit.scale}) rotate(${edit.rotation}deg)`;
+  if (!svg || !path || !transformGroup || !edit) return;
+  const viewBox = svg.viewBox.baseVal;
+  transformGroup.style.transform = `translate(${edit.offsetX * viewBox.width}px, ${edit.offsetY * viewBox.height}px) scale(${edit.scale}) rotate(${edit.rotation}deg)`;
   path.classList.toggle("selected-character", index === selectedCharacterIndex);
+  if (index === selectedCharacterIndex) requestAnimationFrame(updateSelectionBox);
 }
 
 function selectCharacter(index) {
@@ -191,6 +213,7 @@ function selectCharacter(index) {
     path.classList.toggle("selected-character", Number(path.dataset.charIndex) === index);
   });
   updateCharacterControls();
+  requestAnimationFrame(updateSelectionBox);
 }
 
 function readCharacterControls() {
@@ -208,6 +231,11 @@ function readCharacterControls() {
 function wireSvgCharacters() {
   const paths = [...editorPreviewEl.querySelectorAll("svg path")];
   paths.forEach((path, index) => {
+    const transformGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    transformGroup.dataset.charTransform = String(index);
+    transformGroup.classList.add("character-transform");
+    path.parentNode.insertBefore(transformGroup, path);
+    transformGroup.appendChild(path);
     path.dataset.charIndex = String(index);
     path.addEventListener("pointerdown", (event) => {
       event.preventDefault();
@@ -234,6 +262,52 @@ function wireSvgCharacters() {
     path.addEventListener("pointerup", () => (dragState = null));
     path.addEventListener("pointercancel", () => (dragState = null));
   });
+}
+
+function beginSelectionTransform(mode, event) {
+  if (selectedCharacterIndex < 0) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const edit = characterEdits[selectedCharacterIndex];
+  const box = selectionBoxEl.getBoundingClientRect();
+  transformState = {
+    mode,
+    startX: event.clientX,
+    startY: event.clientY,
+    offsetX: edit.offsetX,
+    offsetY: edit.offsetY,
+    scale: edit.scale,
+    rotation: edit.rotation,
+    centerX: box.left + box.width / 2,
+    centerY: box.top + box.height / 2,
+  };
+  transformState.startDistance = Math.max(1, Math.hypot(event.clientX - transformState.centerX, event.clientY - transformState.centerY));
+  transformState.startAngle = Math.atan2(event.clientY - transformState.centerY, event.clientX - transformState.centerX);
+  event.currentTarget.setPointerCapture(event.pointerId);
+}
+
+function moveSelectionTransform(event) {
+  if (!transformState || selectedCharacterIndex < 0) return;
+  const svg = editorPreviewEl.querySelector("svg");
+  const rect = svg.getBoundingClientRect();
+  const edit = characterEdits[selectedCharacterIndex];
+  if (transformState.mode === "move") {
+    edit.offsetX = Math.max(-0.25, Math.min(0.25, transformState.offsetX + (event.clientX - transformState.startX) / rect.width));
+    edit.offsetY = Math.max(-0.25, Math.min(0.25, transformState.offsetY + (event.clientY - transformState.startY) / rect.height));
+  } else if (transformState.mode === "resize") {
+    const distance = Math.hypot(event.clientX - transformState.centerX, event.clientY - transformState.centerY);
+    edit.scale = Math.max(0.4, Math.min(2, transformState.scale * distance / transformState.startDistance));
+  } else if (transformState.mode === "rotate") {
+    const angle = Math.atan2(event.clientY - transformState.centerY, event.clientX - transformState.centerX);
+    edit.rotation = Math.max(-30, Math.min(30, transformState.rotation + (angle - transformState.startAngle) * 180 / Math.PI));
+  }
+  applyCharacterPreview(selectedCharacterIndex);
+  updateCharacterControls();
+}
+
+function endSelectionTransform() {
+  transformState = null;
+  requestAnimationFrame(updateSelectionBox);
 }
 
 async function loadEditorSvg(url) {
@@ -419,6 +493,31 @@ copySavePathEl?.addEventListener("click", async () => {
 characterListEl.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-char-index]");
   if (button) selectCharacter(Number(button.dataset.charIndex));
+});
+selectionBoxEl.addEventListener("pointerdown", (event) => {
+  if (event.target === selectionBoxEl) beginSelectionTransform("move", event);
+});
+resizeHandleEl.addEventListener("pointerdown", (event) => beginSelectionTransform("resize", event));
+rotateHandleEl.addEventListener("pointerdown", (event) => beginSelectionTransform("rotate", event));
+[selectionBoxEl, resizeHandleEl, rotateHandleEl].forEach((element) => {
+  element.addEventListener("pointermove", moveSelectionTransform);
+  element.addEventListener("pointerup", endSelectionTransform);
+  element.addEventListener("pointercancel", endSelectionTransform);
+});
+editorDialogEl.addEventListener("keydown", (event) => {
+  if (selectedCharacterIndex < 0 || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+  if (["INPUT", "TEXTAREA"].includes(event.target.tagName)) return;
+  event.preventDefault();
+  const svg = editorPreviewEl.querySelector("svg");
+  const rect = svg.getBoundingClientRect();
+  const pixels = event.shiftKey ? 10 : 1;
+  const edit = characterEdits[selectedCharacterIndex];
+  if (event.key === "ArrowLeft") edit.offsetX -= pixels / rect.width;
+  if (event.key === "ArrowRight") edit.offsetX += pixels / rect.width;
+  if (event.key === "ArrowUp") edit.offsetY -= pixels / rect.height;
+  if (event.key === "ArrowDown") edit.offsetY += pixels / rect.height;
+  applyCharacterPreview(selectedCharacterIndex);
+  updateCharacterControls();
 });
 editorTextEl.addEventListener("input", () => {
   renderCharacterList();

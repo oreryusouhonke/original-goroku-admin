@@ -88,7 +88,11 @@
         <div class="editor-body">
           <div class="editor-preview">
             <div id="editorPreview" aria-label="編集中の案"></div>
-            <p class="drag-help">文字をクリックして、そのままドラッグで移動</p>
+            <div id="selectionBox" class="selection-box" hidden>
+              <button type="button" class="selection-handle resize-handle" aria-label="文字を拡大縮小"></button>
+              <button type="button" class="selection-handle rotate-handle" aria-label="文字を回転"></button>
+            </div>
+            <p class="drag-help">選択枠をドラッグで移動・角で拡大縮小・上の丸で回転・矢印キーで微調整</p>
           </div>
           <div class="editor-controls">
             <label>

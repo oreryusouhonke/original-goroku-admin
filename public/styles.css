@@ -470,10 +470,13 @@ h1 {
   touch-action: none;
 }
 
-.editor-preview svg path {
-  cursor: grab;
+.editor-preview svg .character-transform {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.editor-preview svg path {
+  cursor: grab;
   transition: opacity .1s ease-out;
 }
 
@@ -498,6 +501,58 @@ h1 {
   color: #fff;
   font-size: 12px;
   pointer-events: none;
+}
+
+.selection-box {
+  position: absolute;
+  z-index: 4;
+  border: 2px solid #1688ff;
+  cursor: move;
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.selection-box[hidden] {
+  display: none;
+}
+
+.selection-handle {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid #1688ff;
+  border-radius: 2px;
+  background: #fff;
+  touch-action: none;
+}
+
+.resize-handle {
+  right: -9px;
+  bottom: -9px;
+  cursor: nwse-resize;
+}
+
+.rotate-handle {
+  left: 50%;
+  top: -34px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  cursor: grab;
+}
+
+.rotate-handle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  width: 2px;
+  height: 16px;
+  background: #1688ff;
+  transform: translateX(-50%);
 }
 
 .preview-loading {
