@@ -31,6 +31,7 @@ const resetCharacterEl = document.querySelector("#resetCharacter");
 const lookupOrderEl = document.querySelector("#lookupOrder");
 const connectNextEngineEl = document.querySelector("#connectNextEngine");
 const orderInfoEl = document.querySelector("#orderInfo");
+const nextEngineSafetyEl = document.querySelector("#nextEngineSafety");
 const selectionBoxEl = document.querySelector("#selectionBox");
 const resizeHandleEl = selectionBoxEl.querySelector(".resize-handle");
 const rotateHandleEl = selectionBoxEl.querySelector(".rotate-handle");
@@ -66,8 +67,13 @@ async function loadNextEngineStatus() {
     connectNextEngineEl.hidden = data.connected;
     lookupOrderEl.disabled = !data.connected;
     lookupOrderEl.textContent = data.connected ? "注文情報を取得" : "NE連携後に取得";
+    const environment = data.mode === "sandbox" ? "テスト環境" : "本番環境";
+    const access = data.readOnly ? "読み取り専用" : "書き込み可能";
+    const email = data.customerEmailEnabled ? "顧客メール送信：有効" : "顧客メール送信：停止中";
+    nextEngineSafetyEl.textContent = `NE：${environment}・${access} / ${email}`;
   } catch {
     lookupOrderEl.disabled = true;
+    nextEngineSafetyEl.textContent = "NE：状態を確認できません（書き込み・メール送信は停止）";
   }
 }
 

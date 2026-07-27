@@ -22,6 +22,9 @@ const NEXT_ENGINE_CLIENT_ID = process.env.NEXT_ENGINE_CLIENT_ID || "";
 const NEXT_ENGINE_CLIENT_SECRET = process.env.NEXT_ENGINE_CLIENT_SECRET || "";
 const NEXT_ENGINE_REDIRECT_URI = process.env.NEXT_ENGINE_REDIRECT_URI
   || "https://original-goroku-admin.onrender.com/api/next-engine/callback";
+const NEXT_ENGINE_MODE = process.env.NEXT_ENGINE_MODE === "sandbox" ? "sandbox" : "production";
+const NEXT_ENGINE_READ_ONLY = true;
+const CUSTOMER_EMAIL_ENABLED = false;
 const PYTHON = process.env.PYTHON || "python";
 const BASIC_USER = process.env.BASIC_USER || "";
 const BASIC_PASSWORD = process.env.BASIC_PASSWORD || "";
@@ -183,6 +186,9 @@ async function handleNextEngineStatus(_req, res) {
     configured: Boolean(NEXT_ENGINE_CLIENT_ID && NEXT_ENGINE_CLIENT_SECRET),
     connected: Boolean(auth?.access_token),
     companyName: auth?.company_name || "",
+    mode: NEXT_ENGINE_MODE,
+    readOnly: NEXT_ENGINE_READ_ONLY,
+    customerEmailEnabled: CUSTOMER_EMAIL_ENABLED,
   });
 }
 
