@@ -429,6 +429,7 @@ h1 {
 .email-recipient dl div { display: grid; grid-template-columns: 90px 1fr; gap: 10px; }
 .email-recipient dt { color: var(--gold); font-weight: 800; }
 .email-recipient dd { margin: 0; white-space: pre-line; }
+.email-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .email-preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
 .email-preview-grid figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
 .email-preview-grid figcaption { padding: 9px; background: #231a16; color: var(--text); font-weight: 900; }
@@ -721,5 +722,5 @@ h1 {
   .toolbar { align-items: stretch; flex-direction: column; }
   .editor-body { grid-template-columns: 1fr; }
   .editor-preview { min-height: 300px; }
-  .email-recipient, .email-preview-grid { grid-template-columns: 1fr; }
+  .email-recipient, .email-options, .email-preview-grid { grid-template-columns: 1fr; }
 }

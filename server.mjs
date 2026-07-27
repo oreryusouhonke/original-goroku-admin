@@ -506,7 +506,7 @@ function resolveGeneratedPng(slugValue, filenameValue) {
   return target.startsWith(baseDir) && existsSync(target) ? target : "";
 }
 
-async function flattenPngOnWhite(source, target) {
+async function flattenImageOnWhite(source, target) {
   const script = [
     "from PIL import Image",
     "import sys",
@@ -514,7 +514,7 @@ async function flattenPngOnWhite(source, target) {
     "im = Image.open(src).convert('RGBA')",
     "bg = Image.new('RGB', im.size, (255,255,255))",
     "bg.paste(im, mask=im.getchannel('A'))",
-    "bg.save(dst, 'PNG', optimize=True)",
+    "bg.save(dst, 'JPEG', quality=95, optimize=True)",
   ].join("\n");
   await new Promise((resolve, reject) => {
     const child = spawn(PYTHON, ["-c", script, source, target], { cwd: __dirname, windowsHide: true });
@@ -538,10 +538,14 @@ async function handleCustomerEmail(req, res) {
     const orderNumber = String(body.orderNumber || "").trim();
     const customerName = String(body.customerName || "お客様").trim();
     const phrase = String(body.phrase || "").trim();
+    const productColor = String(body.productColor || "").trim();
+    const textColor = String(body.textColor || "").trim();
     const files = Array.isArray(body.files) ? [...new Set(body.files.map(String))].slice(0, 1) : [];
     if (!validEmail(recipient)) return json(res, 400, { error: "送信先メールアドレスを確認してください。" });
     if (!orderNumber) return json(res, 400, { error: "注文番号が必要です。" });
     if (!phrase) return json(res, 400, { error: "語録を確認できません。" });
+    if (!productColor) return json(res, 400, { error: "商品カラーを入力してください。" });
+    if (!textColor) return json(res, 400, { error: "文字色を入力してください。" });
     if (files.length !== 1) return json(res, 400, { error: "採用した1案を確認できません。" });
 
     const sources = files.map((filename) => resolveGeneratedPng(body.slug, filename));
@@ -553,10 +557,14 @@ async function handleCustomerEmail(req, res) {
     await mkdir(mailDir, { recursive: true });
     const attachments = [];
     for (let index = 0; index < sources.length; index += 1) {
-      const target = path.join(mailDir, `${Date.now()}_\u63a1\u7528\u6848_\u767d\u80cc\u666f.png`);
-      await flattenPngOnWhite(sources[index], target);
+      const target = path.join(mailDir, `${Date.now()}_\u63a1\u7528\u6848_\u767d\u80cc\u666f.jpg`);
+      await flattenImageOnWhite(sources[index], target);
       temporaryFiles.push(target);
-      attachments.push({ filename: "\u63a1\u7528\u30c7\u30b6\u30a4\u30f3_\u767d\u80cc\u666f.png", path: target, contentType: "image/png" });
+      attachments.push({
+        filename: `${safeSlug(customerName)}\u69d8\u3010${safeSlug(orderNumber)}\u3011.jpg`,
+        path: target,
+        contentType: "image/jpeg",
+      });
     }
 
     const transporter = nodemailer.createTransport({
@@ -569,8 +577,50 @@ async function handleCustomerEmail(req, res) {
     const info = await transporter.sendMail({
       from: SMTP_FROM,
       to: recipient,
-      subject: `\u3010\u4ffa\u6d41\u7dcf\u672c\u5bb6\u3011\u30aa\u30ea\u30b8\u30ca\u30eb\u8a9e\u9332T\u30b7\u30e3\u30c4 \u30c7\u30b6\u30a4\u30f3\u306e\u3054\u78ba\u8a8d\uff08${orderNumber}\uff09`,
-      text: `${customerName} \u69d8\n\n\u3054\u6ce8\u6587\u3044\u305f\u3060\u3044\u305f\u30aa\u30ea\u30b8\u30ca\u30eb\u8a9e\u9332T\u30b7\u30e3\u30c4\u306e\u30c7\u30b6\u30a4\u30f3\u3092\u304a\u9001\u308a\u3057\u307e\u3059\u3002\n\n\u8a9e\u9332\uff1a\n${phrase}\n\n\u6dfb\u4ed8\u306e\u30c7\u30b6\u30a4\u30f3\u3092\u3054\u78ba\u8a8d\u304f\u3060\u3055\u3044\u3002\n\n\u3054\u6ce8\u6587\u756a\u53f7\uff1a${orderNumber}\n\n\u4ffa\u6d41\u7dcf\u672c\u5bb6`,
+      subject: `\u203b\u91cd\u8981\u3010\u5fc5\u305a\u3054\u78ba\u8a8d\u304f\u3060\u3055\u3044\uff01\uff01\u3011${customerName}\u69d8\u3010${orderNumber}\u3011`,
+      text: `\u4ef6\u540d\u306f\u5909\u66f4\u305b\u305a\u5fc5\u305a\u3053\u306e\u307e\u307e\u3054\u8fd4\u4fe1\u304f\u3060\u3055\u3044\u3002
+
+${customerName}\u69d8\u3010${orderNumber}\u3011
+
+\u3053\u306e\u5ea6\u306f\u5f53\u5e97\u3092\u3054\u5229\u7528\u9802\u304d\u8aa0\u306b\u3042\u308a\u304c\u3068\u3046\u3054\u3056\u3044\u307e\u3059\u3002
+
+\u3054\u6ce8\u6587\u9802\u3044\u3066\u304a\u308a\u307e\u3057\u305f\u30aa\u30ea\u30b8\u30ca\u30eb\u8a9e\u9332\u5546\u54c1\u306e\u30c7\u30b6\u30a4\u30f3\uff08\u4eee\uff09\u304c
+\u5b8c\u6210\u81f4\u3057\u307e\u3057\u305f\u3002
+
+\u753b\u50cf\u3092\u6dfb\u4ed8\u3055\u305b\u3066\u9802\u304d\u307e\u3059\u306e\u3067\u3054\u78ba\u8a8d\u3092\u304a\u9858\u3044\u81f4\u3057\u307e\u3059\u3002
+
+\u6dfb\u4ed8\u753b\u50cf
+\u30fb${customerName}\u69d8\u3010${orderNumber}\u3011.jpg
+
+\u3054\u5e0c\u671b\u8a9e\u9332
+\u66f8\u4f53\uff1a\u9b42\u5fc3
+\u8a9e\u9332\uff1a\u300c${phrase}\u300d
+\u203b\u6dfb\u4ed8\u753b\u50cf\u306f\u30b5\u30f3\u30d7\u30eb\u306e\u70ba\u3001\u4e00\u8272\u3068\u3055\u305b\u3066\u9802\u3044\u3066\u304a\u308a\u307e\u3059\u3002
+\u3054\u6ce8\u6587\u9802\u3044\u3066\u304a\u308a\u307e\u3059\u3010${productColor}\u3011\u3010${textColor}\u3011\u306b\u3066\u4f5c\u6210\u3055\u305b\u3066\u9802\u304d\u307e\u3059\u3002
+\u4f55\u5352\u3054\u7406\u89e3\u8cdc\u308a\u307e\u3059\u69d8\u304a\u9858\u3044\u81f4\u3057\u307e\u3059\u3002
+
+\u203b\u3054\u6ce8\u610f\u304f\u3060\u3055\u3044\u3002
+\u3054\u78ba\u8a8d\u306e\u4e0a\u5fc5\u305a\u3010\u78ba\u5b9a\u3011/\u3010\u5909\u66f4\u3011\u3054\u8a18\u8f09\u306e\u4e0a\u3054\u8fd4\u4fe1\u304f\u3060\u3055\u3044\u3002
+\u307e\u305f\u3001\u3054\u5909\u66f4\u306e\u5834\u5408\u306f\u5909\u66f4\u6307\u793a\u5185\u5bb9\u3092\u8a73\u7d30\u306b\u3054\u8a18\u8f09\u304f\u3060\u3055\u3044\u3002
+\u3054\u9023\u7d61\u3092\u304a\u5f85\u3061\u3057\u3066\u304a\u308a\u307e\u3059\u3002
+
+\u4eca\u56de\u3054\u6ce8\u6587\u9802\u304d\u307e\u3057\u305f\u5546\u54c1\u306f\u30aa\u30ea\u30b8\u30ca\u30eb\u8a9e\u9332\u5546\u54c1\u306e\u70ba\u3001\u30c7\u30b6\u30a4\u30f3\u753b\u50cf\u78ba\u5b9a\u3054
+\u9023\u7d61\u3092\u304a\u5ba2\u69d8\u3088\u308a\u9802\u304b\u306a\u3044\u9650\u308a\u3001\u4f5c\u6210\u30fb\u767a\u9001\u306f\u51fa\u6765\u304b\u306d\u307e\u3059\u3002
+\u307e\u305f\u3001\u3054\u8fd4\u4fe1\u306e\u969b\u306f\u3010${orderNumber}\u3011\u306e\u8a18\u8f09\u3092\u304a\u9858\u3044\u81f4\u3057\u307e\u3059\u3002
+\u8aa4\u8a8d\u30c8\u30e9\u30d6\u30eb\u3092\u9632\u3050\u70ba\u4f55\u5352\u3054\u7406\u89e3\u8cdc\u308a\u307e\u3059\u69d8\u304a\u9858\u3044\u81f4\u3057\u307e\u3059\u3002
+
+\u3054\u5e0c\u671b\u306b\u6dfb\u3046\u3088\u3046\u5f0a\u793e\u3067\u304d\u308b\u9650\u308a\u3054\u5bfe\u5fdc\u3055\u305b\u3066\u9802\u304d\u307e\u3059\u3002
+\u5f15\u304d\u7d9a\u304d\u3088\u308d\u3057\u304f\u304a\u9858\u3044\u81f4\u3057\u307e\u3059\u3002
+
+--------------------------------------------------
+\u304a\u3082\u3057\u308dT\u30b7\u30e3\u30c4\u306e\u4ffa\u6d41\u7dcf\u672c\u5bb6
+\u904b\u55b6\u4f1a\u793e\uff1a\u682a\u5f0f\u4f1a\u793e\u592a\u967d
+\u3012289-2148 \u5343\u8449\u770c\u531d\u7473\u5e02\u98ef\u5009\u53f028-11
+TEL\uff1a0479-74-8261
+FAX\uff1a0479-74-8338
+\u53d7\u4ed8\u6642\u9593\uff1a\u5e73\u65e5 9:00\uff5e17:30\uff08\u571f\u65e5\u795d\u65e5\u4f11\u696d\uff09
+https://www.rakuten.co.jp/auc-taiyou-sya/
+--------------------------------------------------`,
       attachments,
     });
     json(res, 200, { ok: true, messageId: info.messageId, recipient });

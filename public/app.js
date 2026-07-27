@@ -48,6 +48,8 @@ const emailPreviewGridEl = document.querySelector("#emailPreviewGrid");
 const emailConfirmedEl = document.querySelector("#emailConfirmed");
 const sendCustomerEmailEl = document.querySelector("#sendCustomerEmail");
 const emailStatusEl = document.querySelector("#emailStatus");
+const productColorEl = document.querySelector("#productColor");
+const mailTextColorEl = document.querySelector("#mailTextColor");
 const SAVE_PATH = "\\\\LS220DD5E\\share\\オリジナル語録デザイン自動生成";
 
 let current = null;
@@ -218,6 +220,8 @@ async function sendCustomerEmail() {
         customerName: customerNameEl.value.trim(),
         orderNumber: orderNumberEl.value.trim(),
         phrase: textEl.value.trim(),
+        productColor: productColorEl.value.trim(),
+        textColor: mailTextColorEl.value.trim(),
       }),
     });
     const data = await response.json();
