@@ -16,9 +16,11 @@ const DEFAULT_DELIVERY_ROOT = process.platform === "win32"
   : path.join(DATA_ROOT, "\u7d0d\u54c1\u30c7\u30fc\u30bf");
 const DELIVERY_ROOT = process.env.DELIVERY_ROOT || DEFAULT_DELIVERY_ROOT;
 const DECISIONS_PATH = path.join(DATA_ROOT, "\u7ba1\u7406\u753b\u9762_\u63a1\u7528\u30e1\u30e2.json");
+const USAGE_PATH = path.join(DATA_ROOT, "\u7ba1\u7406\u753b\u9762_\u5229\u7528\u56de\u6570.json");
 const PYTHON = process.env.PYTHON || "python";
 const BASIC_USER = process.env.BASIC_USER || "";
 const BASIC_PASSWORD = process.env.BASIC_PASSWORD || "";
+let usageUpdate = Promise.resolve();
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -90,6 +92,38 @@ async function listPngs(dir, webPrefix) {
     });
 }
 
+async function readUsageCount() {
+  if (!existsSync(USAGE_PATH)) return 0;
+  try {
+    const data = JSON.parse(await readFile(USAGE_PATH, "utf-8"));
+    return Math.max(0, Number.parseInt(data.count, 10) || 0);
+  } catch {
+    return 0;
+  }
+}
+
+function incrementUsageCount() {
+  usageUpdate = usageUpdate.then(async () => {
+    const count = (await readUsageCount()) + 1;
+    await writeFile(
+      USAGE_PATH,
+      JSON.stringify({ count, updatedAt: new Date().toISOString() }, null, 2),
+      "utf-8",
+    );
+    return count;
+  });
+  return usageUpdate;
+}
+
+async function handleUsage(_req, res) {
+  try {
+    await usageUpdate;
+    json(res, 200, { count: await readUsageCount() });
+  } catch (error) {
+    json(res, 500, { error: String(error.message || error) });
+  }
+}
+
 async function handleGenerate(req, res) {
   try {
     const body = await readJsonBody(req);
@@ -123,7 +157,8 @@ async function handleGenerate(req, res) {
       }
       const horizontal = await listPngs(path.join(outDir, "\u6a2a"), `/outputs/${encodeURIComponent(slug)}/%E6%A8%AA`);
       const vertical = await listPngs(path.join(outDir, "\u7e26"), `/outputs/${encodeURIComponent(slug)}/%E7%B8%A6`);
-      json(res, 200, { slug, title, lines, horizontal, vertical });
+      const usageCount = await incrementUsageCount();
+      json(res, 200, { slug, title, lines, horizontal, vertical, usageCount });
     });
   } catch (error) {
     json(res, 500, { error: String(error.message || error) });
@@ -287,6 +322,7 @@ async function serveStatic(req, res) {
 
 const server = createServer(async (req, res) => {
   if (!authorized(req)) return requireAuth(res);
+  if (req.method === "GET" && req.url === "/api/usage") return handleUsage(req, res);
   if (req.method === "POST" && req.url === "/api/generate") return handleGenerate(req, res);
   if (req.method === "POST" && req.url === "/api/decision") return handleDecision(req, res);
   if (req.method === "GET" && req.url.startsWith("/outputs/")) return serveOutput(req, res);

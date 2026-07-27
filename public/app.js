@@ -6,10 +6,26 @@ const clearEl = document.querySelector("#clear");
 const statusEl = document.querySelector("#status");
 const gridEl = document.querySelector("#grid");
 const copySavePathEl = document.querySelector("#copySavePath");
+const usageCountEl = document.querySelector("#usageCount");
 const stepEls = document.querySelectorAll(".step");
 const SAVE_PATH = "\\\\LS220DD5E\\share\\オリジナル語録デザイン自動生成";
 
 let current = null;
+
+function setUsageCount(count) {
+  usageCountEl.textContent = Number(count || 0).toLocaleString("ja-JP");
+}
+
+async function loadUsageCount() {
+  try {
+    const response = await fetch("/api/usage");
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
+    setUsageCount(data.count);
+  } catch {
+    usageCountEl.textContent = "--";
+  }
+}
 
 function setStatus(message, type = "") {
   statusEl.textContent = message;
@@ -93,6 +109,7 @@ async function generate() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "生成に失敗しました。");
     current = data;
+    setUsageCount(data.usageCount);
     setStatus("3案ができました。良い案を選んで「この案を採用」を押してください。", "ok");
     render();
   } catch (error) {
@@ -163,3 +180,5 @@ copySavePathEl?.addEventListener("click", async () => {
     setStatus(SAVE_PATH, "ok");
   }
 });
+
+loadUsageCount();
