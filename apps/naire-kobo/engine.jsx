@@ -56,7 +56,7 @@
             var sbg=sourceBackground.geometricBounds;
             if(Math.abs((sbg[2]-sbg[0])-(sourceBoard[2]-sourceBoard[0]))>0.05||Math.abs((sbg[1]-sbg[3])-(sourceBoard[1]-sourceBoard[3]))>0.05)throw Error('背景と元アートボードの寸法が一致しません。 board='+sourceBoard+' bg='+sbg);
         }
-        var copies=[], measuredRings=[], numberCopies=[];
+        var copies=[], measuredRings=[], numberCopies=[], numberTargets=[];
         function ringShape(document,group){
             var best=null,area=-1;
             function visit(item){
@@ -125,8 +125,9 @@
             var nb=numberCopy.geometricBounds;
             if(nb[1]-nb[3]>12)numberCopy.resize(12/(nb[1]-nb[3])*100,12/(nb[1]-nb[3])*100);
             nb=numberCopy.geometricBounds;
-            numberCopy.translate((part.bounds[0]+part.bounds[2]-nb[0]-nb[2])/2,part.bounds[1]+16-nb[1]);
+            numberCopy.translate((part.bounds[0]+part.bounds[2]-nb[0]-nb[2])/2,part.bounds[1]+(nb[1]-nb[3])+8*72/25.4-nb[1]);
             numberCopy.name=partIndex===0?'DTF商品識別番号':'DTF商品識別番号-前面';
+            numberTargets.push({number:numberCopy,items:copies.slice(firstCopyIndex)});
             copies.push(numberCopy);numberCopies.push(numberCopy);
             if(partIndex>0){
                 // Place the chest and back on a compact sheet; never scale their artwork to match.
@@ -177,6 +178,13 @@
         bounds=[Infinity,-Infinity,-Infinity,Infinity];
         for(var ac=0;ac<artworkCopies.length;ac++){var ab=artworkCopies[ac].geometricBounds;bounds[0]=Math.min(bounds[0],ab[0]);bounds[1]=Math.max(bounds[1],ab[1]);bounds[2]=Math.max(bounds[2],ab[2]);bounds[3]=Math.min(bounds[3],ab[3]);}
         if(bounds[0]<sourceBoard[0]-0.5||bounds[2]>sourceBoard[2]+0.5||bounds[1]>sourceBoard[1]+0.5||bounds[3]<sourceBoard[3]-0.5)throw Error('柄が元アートボードに収まりません。幅指定を小さくしてください。アートボードは変更しません。 board='+sourceBoard+' artwork='+bounds);
+        // Recheck spacing after text fitting, resizing and placement.
+        for(var nt=0;nt<numberTargets.length;nt++){
+            var target=numberTargets[nt],inkTop=-Infinity;
+            for(var it=0;it<target.items.length;it++)inkTop=Math.max(inkTop,target.items[it].geometricBounds[1]);
+            var numberBounds=target.number.geometricBounds;
+            target.number.translate(0,inkTop+8*72/25.4*scale/100-numberBounds[3]);
+        }
         // Keep identifiers in all board-clipped exports without resizing the board or designs.
         for(var ni=0;ni<numberCopies.length;ni++){
             var number=numberCopies[ni],nb=number.geometricBounds;
