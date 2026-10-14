@@ -700,3 +700,44 @@ async function loadGoogleDriveStatus() {
   entry.replaceChildren(link);
 }
 loadGoogleDriveStatus().catch(()=>{});
+
+const appTabs = [...document.querySelectorAll('.app-tabs [role="tab"]')];
+function selectAppTab(tab, focus = false) {
+  for (const item of appTabs) {
+    const active = item === tab;
+    item.setAttribute('aria-selected', String(active));
+    item.tabIndex = active ? 0 : -1;
+    document.getElementById(item.getAttribute('aria-controls')).hidden = !active;
+  }
+  if (focus) tab.focus();
+  if (tab.id === 'tab-storage') refreshStorageStatus();
+}
+appTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => selectAppTab(tab));
+  tab.addEventListener('keydown', (event) => {
+    let next;
+    if (event.key === 'ArrowRight') next = (index + 1) % appTabs.length;
+    if (event.key === 'ArrowLeft') next = (index + appTabs.length - 1) % appTabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = appTabs.length - 1;
+    if (next !== undefined) { event.preventDefault(); selectAppTab(appTabs[next], true); }
+  });
+});
+async function refreshStorageStatus() {
+  const status = document.getElementById('driveStorageStatus');
+  status.textContent = '接続状態を確認しています。';
+  try {
+    const response = await fetch('/api/google-drive/status', {cache: 'no-store'});
+    if (!response.ok) throw new Error('status');
+    const data = await response.json();
+    status.textContent = data.connected ? 'Googleドライブ：接続済み。採用データの自動保存を利用できます。' : data.configured ? 'Googleドライブ：接続の許可待ち。採用データは保存待ちとして保持されます。' : 'Googleドライブ：接続設定待ち。採用データは保存待ちとして保持されます。';
+    if (data.connected || data.configured) {
+      const link = document.createElement('a');
+      link.href = data.connected ? data.folderUrl : '/api/google-drive/connect';
+      link.textContent = data.connected ? '保存先を開く' : 'Googleドライブに接続する';
+      if (data.connected) { link.target = '_blank'; link.rel = 'noreferrer'; }
+      status.append(document.createElement('br'), link);
+    }
+  } catch { status.textContent = '接続状態を取得できませんでした。「状態を更新」で再確認してください。'; }
+}
+document.getElementById('refreshStorage').addEventListener('click', refreshStorageStatus);
