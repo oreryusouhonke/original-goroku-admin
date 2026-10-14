@@ -62,35 +62,7 @@ def generate_one(job):
     return folder
 
 def generate(job):
-    if len(job['layout'])<2:
-        return generate_one(job)
-    folder=CACHE / uuid.uuid4().hex
-    folder.mkdir(parents=True)
-    names=[];previews=[]
-    for part,side in zip(job['layout'],('back','front')):
-        side_job=dict(job,layout=[part],id=job['id']+'-'+side,printSide=side)
-        side_folder=generate_one(side_job)
-        for suffix in ('.ai','-outlined.pdf','.png','-preview.png'):
-            name=side_job['id']+suffix
-            shutil.move(str(side_folder/name),str(folder/name));names.append(name)
-        with Image.open(folder/(side_job['id']+'-preview.png')) as image:
-            image=image.convert('RGB');image.thumbnail((440,800),Image.Resampling.LANCZOS);previews.append(image.copy())
-        metrics=side_folder/(side_job['id']+'-metrics.json')
-        if metrics.exists():shutil.move(str(metrics),str(folder/metrics.name))
-        for temporary_name in ('job.json','入力内容.json'):(side_folder/temporary_name).unlink(missing_ok=True)
-        if not any(side_folder.iterdir()):
-            try:side_folder.rmdir()
-            except OSError:pass
-    from PIL import ImageDraw
-    preview=Image.new('RGB',(920,max(p.height for p in previews)+50),'#eeeeee')
-    for index,(side,image) in enumerate(zip(('BACK','FRONT'),previews)):
-        ImageDraw.Draw(preview).text((index*460+15,15),side,fill='black')
-        preview.paste(image,(index*460+(460-image.width)//2,40))
-    preview_name=job['id']+'-preview.png';preview.save(folder/preview_name);names.append(preview_name)
-    (folder/'入力内容.json').write_text(json.dumps(dict(job,outputSides=['back','front']),ensure_ascii=False,indent=2),encoding='utf-8')
-    names.append(job['id']+'-入力内容.json')
-    (folder/'output-files.json').write_text(json.dumps(names,ensure_ascii=False),encoding='utf-8')
-    return folder
+    return generate_one(job)
 
 def export_files(folder, job, destination):
     destination=Path(destination)
@@ -224,7 +196,7 @@ class App(tk.Tk):
             self.background_picker.set('背景色を選択してください');self.background_picker.pack(anchor='w',pady=(8,0))
         self.collar_value.set('');self.collar_frame.pack_forget()
         if product.get('collarFrames'):self.collar_frame.pack(fill='x',before=self.preview_button,pady=8)
-        self.product_label.configure(text=product['name']+'  / '+product['id']+('  ／ 背面・前面（胸）を別ファイルで出力' if len(variants[0]['layouts']['1'])>1 else ''))
+        self.product_label.configure(text=product['name']+'  / '+product['id']+('  ／ 背面・前面（胸）を同じアートボードで出力' if len(variants[0]['layouts']['1'])>1 else ''))
         if len(variants)==1:self.variant_picker.current(0);self.choose_variant()
         else:self.variant_picker.set('サイズ・版を選択してください');self.changed()
         if hasattr(self,'catalog_window') and self.catalog_window.winfo_exists():self.catalog_window.destroy()
@@ -237,7 +209,7 @@ class App(tk.Tk):
         index=self.variant_picker.current()
         if index<0:self.selected_variant=None;return
         self.selected_variant=self.selected_product['variants'][index]
-        self.product_label.configure(text=self.selected_product['name']+'  / '+self.selected_product['id']+('  ／ 背面・前面（胸）を別ファイルで出力' if len(self.selected_variant['layouts']['1'])>1 else ''))
+        self.product_label.configure(text=self.selected_product['name']+'  / '+self.selected_product['id']+('  ／ 背面・前面（胸）を同じアートボードで出力' if len(self.selected_variant['layouts']['1'])>1 else ''))
         self.changed()
 
     def show_on_start(self):
@@ -320,7 +292,7 @@ class App(tk.Tk):
         except FileExistsError:messagebox.showerror('保存名が重複しています','同名のファイルがあります。別の保存名で見本を作成するか、別のフォルダーを選んでください。');return
         except Exception as e:messagebox.showerror('保存エラー',str(e));return
         self.output=Path(selected);self.status.set('出力しました：'+selected)
-        messagebox.showinfo('出力完了','編集用AI・印刷用PDF・PNG・確認画像・入力内容を保存しました。前後がある商品は -back が背面、-front が前面です。')
+        messagebox.showinfo('出力完了','編集用AI・印刷用PDF・PNG・確認画像・入力内容を保存しました。前後がある商品は同じアートボードに両面を配置しています。')
 
     def open_output(self):
         self.output.mkdir(parents=True,exist_ok=True);os.startfile(str(self.output))
