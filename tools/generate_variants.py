@@ -201,7 +201,7 @@ def placement_data(canvas: tuple[int, int], spec: list[dict], glyph_edits: list[
     return placed
 
 
-def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None, placed=None) -> None:
+def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None, placed=None, shirt_color="black") -> None:
     placed = placed if placed is not None else placement_data(canvas, spec, glyph_edits)
     ratio = PREVIEW_SIZE / canvas[0]
     canvas = (PREVIEW_SIZE, PREVIEW_SIZE)
@@ -220,7 +220,7 @@ def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_ed
         )
         glyph_draw = ImageDraw.Draw(glyph)
         box = item["bbox"]
-        glyph_draw.text((glyph_pad - box[0], glyph_pad - box[1]), item["char"], font=item["font"], fill=INK)
+        glyph_draw.text((glyph_pad - box[0], glyph_pad - box[1]), item["char"], font=item["font"], fill=(255, 255, 255, 255) if shirt_color == "black" else (0, 0, 0, 255))
         resized = (
             max(1, int(glyph.width * item["sx"])),
             max(1, int(glyph.height * item["sy"])),
@@ -242,7 +242,9 @@ def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_ed
             image = Image.new("RGBA", canvas, (0, 0, 0, 0))
             image.alpha_composite(resized, ((canvas[0] - resized.width) // 2, (canvas[1] - resized.height) // 2))
     path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path)
+    background = Image.new("RGBA", canvas, (0, 0, 0, 255) if shirt_color == "black" else (255, 255, 255, 255))
+    background.alpha_composite(image)
+    background.convert("RGB").save(path)
 
 
 @lru_cache(maxsize=512)
@@ -303,7 +305,7 @@ def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits
     svg = "\n".join(
         [
             f'<svg xmlns="http://www.w3.org/2000/svg" width="300mm" height="300mm" viewBox="0 0 {canvas[0]} {canvas[1]}">',
-            f'<g fill="#231713" transform="translate({group_tx:.3f} {group_ty:.3f}) scale({group_sx:.6f} {group_sy:.6f})">',
+            f'<g fill="#000000" transform="translate({group_tx:.3f} {group_ty:.3f}) scale({group_sx:.6f} {group_sy:.6f})">',
             *paths,
             "</g>",
             "</svg>",
@@ -313,12 +315,12 @@ def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits
     path.write_text(svg, encoding="utf-8")
 
 
-def write_design(path: Path, lines: list[str], variant: str, edit: dict | None = None) -> None:
+def write_design(path: Path, lines: list[str], variant: str, edit: dict | None = None, shirt_color="black") -> None:
     # Keep only rendering inputs, never order/customer details or local paths.
     params = {key: edit[key] for key in ("scale", "offsetX", "offsetY", "rotation", "spacing", "charEdits") if edit and key in edit}
     path.write_text(json.dumps({"schemaVersion": 1, "lines": lines, "variant": variant,
         "orientation": "square", "svgSizeMm": [300, 300], "previewSize": [900, 900],
-        "font": FONT.name, "edit": params}, ensure_ascii=False, indent=2), encoding="utf-8")
+        "font": FONT.name, "shirtColor": shirt_color, "edit": params}, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def main() -> None:
@@ -330,6 +332,7 @@ def main() -> None:
 
     request = json.loads(Path(args.request).read_text(encoding="utf-8"))
     lines = [line.strip() for line in request["lines"] if line.strip()]
+    shirt_color = "white" if request.get("shirtColor") == "white" else "black"
     specs = variant_specs(lines)
     out = Path(args.out)
     if args.edit:
@@ -344,15 +347,15 @@ def main() -> None:
         spec = apply_edits(specs[variant], edit)
         glyph_edits = edit.get("charEdits") or []
         placed = placement_data(canvas, spec, glyph_edits)
-        draw_variant(canvas, spec, out / folder / f"{filename}.png", glyph_edits, placed)
+        draw_variant(canvas, spec, out / folder / f"{filename}.png", glyph_edits, placed, shirt_color=shirt_color)
         write_svg(canvas, spec, out / folder / f"{filename}.svg", glyph_edits, placed)
-        write_design(out / folder / f"{filename}.design.json", lines, variant, edit)
+        write_design(out / folder / f"{filename}.design.json", lines, variant, edit, shirt_color=shirt_color)
         return
     for name, spec in specs.items():
         placed = placement_data(SQUARE_CANVAS, spec)
-        draw_variant(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.png", placed=placed)
+        draw_variant(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.png", placed=placed, shirt_color=shirt_color)
         write_svg(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.svg", placed=placed)
-        write_design(out / "\u6b63\u65b9\u5f62" / f"{name}.design.json", lines, name)
+        write_design(out / "\u6b63\u65b9\u5f62" / f"{name}.design.json", lines, name, shirt_color=shirt_color)
 
 
 if __name__ == "__main__":
