@@ -19,9 +19,20 @@ def parse_launch(arguments):
   variant=next((v for v in product['variants'] if v['id']==variant_id),None)
   return product,variant
  return None,None
-def attach_product(job,product,variant):
+def launch_background(arguments,product):
+ for argument in arguments:
+  parsed=urlparse(argument)
+  if parsed.scheme=="oreryu-naire" and parsed.netloc=="open":
+   key=parse_qs(parsed.query).get("background",[""])[0]
+   return next((b for b in product.get("backgrounds",[]) if b["id"]==key),None)
+ return None
+
+def attach_product(job,product,variant,background=None):
  template=(ROOT/product['template']).resolve()
  if ROOT/'templates' not in template.parents:raise ValueError('テンプレートの保存先が不正です。')
  if not template.is_file():raise ValueError('商品のIllustratorテンプレートが見つかりません。')
  if hashlib.sha256(template.read_bytes()).hexdigest()!=product['templateSha256']:raise ValueError('テンプレートが変更されています。カタログとの対応を確認してください。')
- return dict(job,templatePath=str(template),layout=variant['layouts'][str(len(job['mark']))],templateScale=variant['scale'],productCode=product['id'],productName=product['name'],productVariant=variant['name'],printId=product['printId'],collarFrames=product.get('collarFrames',[]),collarText=job['shop'])
+ if product.get("backgrounds"):
+  background=next((b for b in product["backgrounds"] if background and b["id"]==background["id"]),None)
+  if background is None:raise ValueError("元AIの背景色を選んでください。")
+ return dict(job,printBackground=product.get("printBackground",False),background=background,artboardRect=product["artboardRect"],templatePath=str(template),layout=variant['layouts'][str(len(job['mark']))],templateScale=variant['scale'],productCode=product['id'],productName=product['name'],productVariant=variant['name'],printId=product['printId'],collarFrames=product.get('collarFrames',[]),collarText=job['shop'])

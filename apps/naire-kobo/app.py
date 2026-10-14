@@ -11,7 +11,7 @@ import uuid
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
-from catalog import load_catalog, attach_product, parse_launch, image_path
+from catalog import load_catalog, attach_product, parse_launch, launch_background, image_path
 import webbrowser
 
 ROOT = Path(__file__).resolve().parent
@@ -42,7 +42,7 @@ def generate(job):
     job_path.write_text(json.dumps(data,ensure_ascii=False),encoding='utf-8')
     result=subprocess.run(['powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',str(ROOT/'worker.ps1'),'-JobPath',str(job_path)],capture_output=True,creationflags=subprocess.CREATE_NO_WINDOW)
     if result.returncode:
-        message=(result.stderr or result.stdout).decode('utf-8',errors='replace').strip()
+        message=(result.stderr or result.stdout).decode('utf-8' if (result.stderr or result.stdout).startswith(b'\xef\xbb\xbf') else 'cp932',errors='replace').strip()
         raise RuntimeError(message or 'Illustratorでの作成に失敗しました。')
     for suffix in ('.ai','.png','-outlined.pdf','-preview.png'):
         if not (folder/(job['id']+suffix)).is_file(): raise RuntimeError('出力が揃いませんでした。')
@@ -50,7 +50,7 @@ def generate(job):
     with Image.open(folder/(job['id']+'.png')).convert('RGBA') as image:
         pixels=[rgb for rgb in image.resize((100,100)).getdata() if rgb[3]>200]
         light=not pixels or sum(sum(rgb[:3])/3 for rgb in pixels)/len(pixels)>128
-        background=Image.new('RGBA',image.size,'black' if light else 'white')
+        background=Image.new('RGBA',image.size,'white' if job.get('printBackground') else ('black' if light else 'white'))
         background.alpha_composite(image)
         background.convert('RGB').save(folder/(job['id']+'-preview.png'))
     (folder/'入力内容.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -94,6 +94,8 @@ class App(tk.Tk):
         self.variant_name=tk.StringVar()
         self.variant_picker=ttk.Combobox(top,textvariable=self.variant_name,state='readonly',width=60)
         self.variant_picker.pack(anchor='w',pady=(8,0));self.variant_picker.bind('<<ComboboxSelected>>',self.choose_variant)
+        self.background_name=tk.StringVar();self.background_picker=ttk.Combobox(top,textvariable=self.background_name,state='readonly',width=60)
+        self.background_picker.bind('<<ComboboxSelected>>',lambda e:self.changed())
         body=ttk.Frame(self,padding=(26,0,26,12));body.pack(fill='both',expand=True)
         left_outer=ttk.Frame(body,width=350);left_outer.pack(side='left',fill='y',padx=(0,20));left_outer.pack_propagate(False)
         left_canvas=tk.Canvas(left_outer,width=330,highlightthickness=0,bg='#f3f1ec')
@@ -108,7 +110,7 @@ class App(tk.Tk):
             ('year','上段','創業平成二十二年','10文字まで'),
             ('shop','下段','俺流総本家','7文字まで'),
             ('id','保存名・注文番号','sample','同じ名前のファイルは上書きしません'),
-            ('width','幅を変更する場合のみ（mm）','','空欄：選択商品の元寸法。全商品を同じ大きさにはしません')]:
+            ('width','柄の幅を変更する場合のみ（mm）','','アートボードは元AIのサイズを保持します。収まらない指定は出力できません')]:
             ttk.Label(left,text=label).pack(anchor='w',pady=(9,3))
             value=tk.StringVar(value=default);self.fields[key]=value
             entry=ttk.Entry(left,textvariable=value,font=('Yu Gothic UI',13));entry.pack(fill='x',ipady=4)
@@ -127,7 +129,7 @@ class App(tk.Tk):
         ttk.Label(right,text='仕上がり確認',font=('Yu Gothic UI',14,'bold')).pack(anchor='w',pady=(8,10))
         self.canvas=tk.Canvas(right,bg='#161a19',highlightthickness=0);self.canvas.pack(fill='both',expand=True)
         self.canvas.bind('<Configure>',lambda e:self.draw())
-        ttk.Label(right,text='黒地は画面確認用です。印刷用データと透過PNGには入りません。',font=('Yu Gothic UI',9),wraplength=620).pack(anchor='w',pady=8)
+        ttk.Label(right,text='タオル類の背景は元AIの色でAI・PDF・PNGにも入ります。アートボードは元AIのサイズを保持します。',font=('Yu Gothic UI',9),wraplength=620).pack(anchor='w',pady=8)
         self.status=tk.StringVar(value='内容を入力して「見本を作成」を押してください。')
         ttk.Label(self,textvariable=self.status,padding=(26,10),wraplength=1050).pack(fill='x')
         self.output=ROOT/'出力'
@@ -140,6 +142,8 @@ class App(tk.Tk):
                 self.select_product(launch_product)
                 if launch_variant:
                     self.variant_picker.current(next(i for i,v in enumerate(launch_product['variants']) if v['id']==launch_variant['id']));self.choose_variant()
+                launch_bg=launch_background(sys.argv[1:],launch_product)
+                if launch_bg:self.background_picker.current(next(i for i,b in enumerate(launch_product["backgrounds"]) if b["id"]==launch_bg["id"]))
             else:self.after(300,self.open_catalog)
 
     def open_catalog(self):
@@ -178,6 +182,10 @@ class App(tk.Tk):
         self.selected_product=product;variants=product['variants']
         self.variant_picker['values']=[self.variant_title(v) for v in variants]
         self.fields['width'].set('');self.selected_variant=None
+        self.background_picker.pack_forget();self.background_name.set('')
+        if product.get('backgrounds'):
+            self.background_picker['values']=['背景色：'+b['name']+'（元AI）' for b in product['backgrounds']]
+            self.background_picker.set('背景色を選択してください');self.background_picker.pack(anchor='w',pady=(8,0))
         self.collar_value.set('');self.collar_frame.pack_forget()
         if product.get('collarFrames'):self.collar_frame.pack(fill='x',before=self.preview_button,pady=8)
         self.product_label.configure(text=product['name']+'  / '+product['id'])
@@ -186,7 +194,7 @@ class App(tk.Tk):
         if hasattr(self,'catalog_window') and self.catalog_window.winfo_exists():self.catalog_window.destroy()
 
     def variant_title(self,variant):
-        return f"{variant['name']}  / 柄の配置枠 {variant['designWidthMm']:g} × {variant['designHeightMm']:g} mm"
+        return f"{'背景色：' if self.selected_product.get('printBackground') and not self.selected_product.get('backgrounds') else ''}{variant['name']}  / 柄の配置枠 {variant['designWidthMm']:g} × {variant['designHeightMm']:g} mm"
 
     def choose_variant(self,event=None):
         if not self.selected_product:return
@@ -214,11 +222,16 @@ class App(tk.Tk):
         if hasattr(self,'save_button'): self.save_button.configure(state='disabled')
         if hasattr(self,'status'):self.status.set('入力を変更しました。見本を作成し直してください。')
 
+    def selected_background(self):
+        index=self.background_picker.current()
+        colors=self.selected_product.get("backgrounds",[]) if self.selected_product else []
+        return colors[index] if 0<=index<len(colors) else None
+
     def preview(self):
         if self.busy:return
         try:
             if not self.selected_product or not self.selected_variant:raise ValueError('カタログから商品を選んでください。')
-            job=attach_product(validate(*(self.fields[k].get().strip() for k in ('mark','year','shop','id','width'))),self.selected_product,self.selected_variant)
+            job=attach_product(validate(*(self.fields[k].get().strip() for k in ('mark','year','shop','id','width'))),self.selected_product,self.selected_variant,self.selected_background())
             if job.get('collarFrames'):
                 collar=self.collar_value.get().strip() or job['shop']
                 if len(collar)>20 or any(c in collar for c in '\r\n') or any(ord(c)>0xffff for c in collar):raise ValueError('襟の文字は20文字以内の1行で入力してください。')
@@ -226,7 +239,7 @@ class App(tk.Tk):
         except ValueError as e: messagebox.showerror('入力を確認してください',str(e));return
         self.busy=True;self.preview_button.configure(state='disabled');self.save_button.configure(state='disabled')
         self.catalog_button.configure(state='disabled');self.variant_picker.configure(state='disabled')
-        self.collar_entry.configure(state='disabled')
+        self.collar_entry.configure(state='disabled');self.background_picker.configure(state='disabled')
         self.status.set('Illustratorで見本を作成しています…')
         def work():
             try:self.events.put(('ok',job,generate(job)))
@@ -238,14 +251,14 @@ class App(tk.Tk):
             event=self.events.get_nowait()
             self.busy=False;self.preview_button.configure(state='normal')
             self.catalog_button.configure(state='normal');self.variant_picker.configure(state='readonly')
-            self.collar_entry.configure(state='normal')
+            self.collar_entry.configure(state='normal');self.background_picker.configure(state='readonly')
             if event[0]=='error':
                 self.status.set('作成に失敗しました。');messagebox.showerror('作成エラー',event[1])
             else:
                 _,job,folder=event
                 self.image=Image.open(folder/(job['id']+'-preview.png')).copy();self.draw()
                 current=tuple(self.fields[k].get().strip() for k in ('mark','year','shop','id','width'))
-                try: matches=validate(*current)==job
+                try: matches=attach_product(validate(*current),self.selected_product,self.selected_variant,self.selected_background())==dict(job,collarText=job["shop"]) and (self.collar_value.get().strip() or job["shop"])==job["collarText"]
                 except ValueError:matches=False
                 if matches:
                     self.result=(job,folder);self.save_button.configure(state='normal')
@@ -271,7 +284,7 @@ class App(tk.Tk):
         except FileExistsError:messagebox.showerror('保存名が重複しています','同名のファイルがあります。別の保存名で見本を作成するか、別のフォルダーを選んでください。');return
         except Exception as e:messagebox.showerror('保存エラー',str(e));return
         self.output=Path(selected);self.status.set('出力しました：'+selected)
-        messagebox.showinfo('出力完了','編集用AI・印刷用PDF・透過PNG・確認画像・入力内容を保存しました。')
+        messagebox.showinfo('出力完了','編集用AI・印刷用PDF・PNG・確認画像・入力内容を保存しました。')
 
     def open_output(self):
         self.output.mkdir(parents=True,exist_ok=True);os.startfile(str(self.output))

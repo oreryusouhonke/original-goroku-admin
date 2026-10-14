@@ -25,11 +25,34 @@
     if (aiFile.exists) throw Error('同名の出力が存在します: ' + id);
     app.textFonts.getByName('HakusyuKointaiBold');
     app.textFonts.getByName('HGPEdomojiKanteiryu');
-    var oldInteraction=app.userInteractionLevel; app.userInteractionLevel=UserInteractionLevel.DONTDISPLAYALERTS; var src = app.open(source), dst = null; if(!src) { for(var q=0;q<app.documents.length;q++) if(app.documents[q].fullName.fsName===source.fsName) src=app.documents[q]; } if(!src) throw Error("作業コピーを開けませんでした。");
+    var oldInteraction=app.userInteractionLevel; app.userInteractionLevel=UserInteractionLevel.DONTDISPLAYALERTS; var workingSource=new File(out.fsName+'/template-work.ai');source.copy(workingSource.fsName); var src = app.open(workingSource), dst = null; if(!src) { for(var q=0;q<app.documents.length;q++) if(app.documents[q].fullName.fsName===workingSource.fsName) src=app.documents[q]; } if(!src) throw Error("作業コピーを開けませんでした。");
     try {
         var i;
         if(!job.layout || !job.layout.length) throw Error('商品とサイズをカタログから選んでください。');
-        dst=app.documents.add(DocumentColorSpace.CMYK,566.9291,566.9291);
+        var sourceBoard=src.artboards[0].artboardRect;
+        sourceBoard=[sourceBoard[0],sourceBoard[1],sourceBoard[2],sourceBoard[3]];
+        dst=app.documents.add(DocumentColorSpace.CMYK,sourceBoard[2]-sourceBoard[0],sourceBoard[1]-sourceBoard[3]);
+        dst.artboards[0].artboardRect=sourceBoard;
+        var sourceBackground=null;
+        if(job.printBackground){
+            if(job.background){sourceBackground=src.layers[job.background.layer].pageItems[job.background.item];}
+            else {
+                var centralBox=src.textFrames[job.layout[0].central].geometricBounds;
+                var cx=(centralBox[0]+centralBox[2])/2,cy=(centralBox[1]+centralBox[3])/2,bestArea=Infinity;
+                for(var bl=0;bl<src.layers.length;bl++){
+                    var layer=src.layers[bl];
+                    for(var bi=0;bi<Math.min(100,layer.pageItems.length);bi++){
+                        var item=layer.pageItems[bi];
+                        if(item.parent.typename!=='Layer'||item.typename!=='PathItem'||!item.filled)continue;
+                        var bb=item.geometricBounds,area=(bb[2]-bb[0])*(bb[1]-bb[3]);
+                        if(bb[0]<=cx&&bb[2]>=cx&&bb[1]>=cy&&bb[3]<=cy&&area<bestArea){sourceBackground=item;bestArea=area;}
+                    }
+                }
+            }
+            if(!sourceBackground||sourceBackground.typename!=='PathItem'||!sourceBackground.filled)throw Error('元AIの背景色が見つかりません。');
+            var sbg=sourceBackground.geometricBounds;
+            if(Math.abs((sbg[2]-sbg[0])-(sourceBoard[2]-sourceBoard[0]))>0.05||Math.abs((sbg[1]-sbg[3])-(sourceBoard[1]-sourceBoard[3]))>0.05)throw Error('背景と元アートボードの寸法が一致しません。 board='+sourceBoard+' bg='+sbg);
+        }
         var copies=[], measuredRings=[];
         function ringShape(document,group){
             var best=null,area=-1;
@@ -95,6 +118,7 @@
             }
         }
         // The original product number 9 and each new catalog code stay on the print sheet.
+        var artworkCopies=copies.slice(0);
         var first=job.layout[0].bounds;
         var numberCopy;
         if(job.layout[0].marker!==null && job.layout[0].marker!==undefined){
@@ -130,20 +154,37 @@
         }
         var metrics=new File(out.fsName+'/'+id+'-metrics.json');metrics.open('w');metrics.write('['+measures.join(',')+']');metrics.close();
         bounds=design.geometricBounds;
-        var margin=12, width=bounds[2]-bounds[0], height=bounds[1]-bounds[3];
-        design.translate(margin-bounds[0],height+margin-bounds[1]);
-        dst.artboards[0].artboardRect=[0,height+margin*2,width+margin*2,0];
+        var boardWidth=sourceBoard[2]-sourceBoard[0],boardHeight=sourceBoard[1]-sourceBoard[3];
+        var backgroundCopy=null;
+        if(sourceBackground){
+            var sourceBackgroundBounds=sourceBackground.geometricBounds;
+            design.translate(sourceBoard[0]-sourceBackgroundBounds[0],sourceBoard[1]-sourceBackgroundBounds[1]);
+            backgroundCopy=sourceBackground.duplicate(dst,ElementPlacement.PLACEATEND);
+            backgroundCopy.hidden=false;backgroundCopy.locked=false;
+            var copiedBackgroundBounds=backgroundCopy.geometricBounds;
+            backgroundCopy.translate(sourceBoard[0]-copiedBackgroundBounds[0],sourceBoard[1]-copiedBackgroundBounds[1]);
+            backgroundCopy.name='元AIの背景色';backgroundCopy.zOrder(ZOrderMethod.SENDTOBACK);
+        }else{
+            var artworkBounds=[Infinity,-Infinity,-Infinity,Infinity];
+            for(var ac=0;ac<artworkCopies.length;ac++){var ab=artworkCopies[ac].geometricBounds;artworkBounds[0]=Math.min(artworkBounds[0],ab[0]);artworkBounds[1]=Math.max(artworkBounds[1],ab[1]);artworkBounds[2]=Math.max(artworkBounds[2],ab[2]);artworkBounds[3]=Math.min(artworkBounds[3],ab[3]);}
+            design.translate((sourceBoard[0]+sourceBoard[2]-artworkBounds[0]-artworkBounds[2])/2,(sourceBoard[1]+sourceBoard[3]-artworkBounds[1]-artworkBounds[3])/2);
+        }
+        bounds=[Infinity,-Infinity,-Infinity,Infinity];
+        for(var ac=0;ac<artworkCopies.length;ac++){var ab=artworkCopies[ac].geometricBounds;bounds[0]=Math.min(bounds[0],ab[0]);bounds[1]=Math.max(bounds[1],ab[1]);bounds[2]=Math.max(bounds[2],ab[2]);bounds[3]=Math.min(bounds[3],ab[3]);}
+        if(bounds[0]<sourceBoard[0]-0.5||bounds[2]>sourceBoard[2]+0.5||bounds[1]>sourceBoard[1]+0.5||bounds[3]<sourceBoard[3]-0.5)throw Error('柄が元アートボードに収まりません。幅指定を小さくしてください。アートボードは変更しません。 board='+sourceBoard+' artwork='+bounds);
+        dst.artboards[0].artboardRect=sourceBoard;
         var opts=new IllustratorSaveOptions();opts.pdfCompatible=true;
         dst.saveAs(aiFile,opts);
-        var png=new ExportOptionsPNG24();png.transparency=true;png.artBoardClipping=true;png.horizontalScale=200;png.verticalScale=200;
+        var png=new ExportOptionsPNG24();png.transparency=!job.printBackground;png.artBoardClipping=true;png.horizontalScale=200;png.verticalScale=200;
         dst.exportFile(new File(out.fsName+'/'+id+'.png'),ExportType.PNG24,png);
-        // Black background is only for the screen preview, never the print output.
-        var bg=dst.pathItems.rectangle(height+margin*2,0,width+margin*2,height+margin*2);
-        var black=new CMYKColor();black.black=100;bg.fillColor=black;bg.stroked=false;
-        bg.zOrder(ZOrderMethod.SENDTOBACK);
+        var previewBackground=null;
+        if(!backgroundCopy){
+            previewBackground=dst.pathItems.rectangle(sourceBoard[1],sourceBoard[0],boardWidth,boardHeight);
+            var black=new CMYKColor();black.black=100;previewBackground.fillColor=black;previewBackground.stroked=false;previewBackground.zOrder(ZOrderMethod.SENDTOBACK);
+        }
         png.transparency=false;
         dst.exportFile(new File(out.fsName+'/'+id+'-preview.png'),ExportType.PNG24,png);
-        bg.remove();
+        if(previewBackground)previewBackground.remove();
         for(i=dst.textFrames.length-1;i>=0;i--) dst.textFrames[i].createOutline();
         var pdf=new PDFSaveOptions();pdf.preserveEditability=false;
         dst.saveAs(new File(out.fsName+'/'+id+'-outlined.pdf'),pdf);
@@ -151,7 +192,7 @@
         if(typeof NAIRE_JOB==='undefined') alert('出力しました: '+out.fsName+'\n実注文に使う前に文字と寸法を確認してください。');
     } finally {
         if(dst) dst.close(SaveOptions.DONOTSAVECHANGES);
-        try { if(src) src.close(SaveOptions.DONOTSAVECHANGES); } catch(closeError) {} app.userInteractionLevel=oldInteraction;
+        try { if(src) src.close(SaveOptions.DONOTSAVECHANGES); } catch(closeError) {} try{workingSource.remove();}catch(removeError){} app.userInteractionLevel=oldInteraction;
     }
 })();
 
