@@ -17,7 +17,7 @@
     if (!/^[^\r\n]{1,2}$/.test(job.mark)) throw Error('中央は1文字または2文字で指定してください。');
     if (!job.year || job.year.length > 10 || /[\r\n]/.test(job.year)) throw Error('上段は1～10文字で指定してください。');
     if (!job.shop || job.shop.length > 7 || /[\r\n]/.test(job.shop)) throw Error('下段は1～7文字で指定してください。');
-    var source = new File(root.fsName + '/source.ai');
+    var source = new File(job.templatePath || (root.fsName + '/source.ai'));
     if (!source.exists) throw Error('source.ai が見つかりません。');
     var out = new Folder(job.outputDir || (root.fsName + '/output')); out.create();
     var id = String(job.id || 'sample').replace(/[\\\/:*?"<>|]/g, '_');
@@ -27,38 +27,20 @@
     app.textFonts.getByName('HGPEdomojiKanteiryu');
     var oldInteraction=app.userInteractionLevel; app.userInteractionLevel=UserInteractionLevel.DONTDISPLAYALERTS; var src = app.open(source), dst = null; if(!src) { for(var q=0;q<app.documents.length;q++) if(app.documents[q].fullName.fsName===source.fsName) src=app.documents[q]; } if(!src) throw Error("作業コピーを開けませんでした。");
     try {
-        var central = null, years = [], shops = [], i;
-        for (i=0;i<src.textFrames.length;i++) {
-            var t=src.textFrames[i];
-            if(t.name === (job.mark.length===1 ? '①-1文字' : '①-2文字')) central=t;
-            if(t.name==='②') years.push(t);
-            if(t.name==='③') shops.push(t);
-        }
-        if(!central || years.length!==2 || shops.length!==2) throw Error('テンプレート構造が想定と異なります。');
-        years.sort(function(a,b){return a.left-b.left;});
-        shops.sort(function(a,b){return a.left-b.left;});
-        var side=job.mark.length===1 ? 0 : 1;
-        var cx=(central.geometricBounds[0]+central.geometricBounds[2])/2, ring=null;
-        for(i=0;i<src.groupItems.length;i++){
-            var g=src.groupItems[i], b=g.geometricBounds;
-            if(g.parent.typename==='Layer' && Math.abs((b[0]+b[2])/2-cx)<20 && b[1]>-150 && b[3]<-530) ring=g;
-        }
-        if(!ring) throw Error('丸枠を識別できません。');
-        // The small number above each design is a required DTF product identifier.
-        var productNumber=null, nearest=Number.MAX_VALUE;
-        for(i=0;i<src.textFrames.length;i++) {
-            var numberFrame=src.textFrames[i], nb=numberFrame.geometricBounds;
-            if(/^\d+$/.test(numberFrame.contents) && nb[1]>-40 && nb[3]<-40) {
-                var distance=Math.abs((nb[0]+nb[2])/2-cx);
-                if(distance<nearest) {nearest=distance;productNumber=numberFrame;}
-            }
-        }
-        if(!productNumber || nearest>100) throw Error('DTF商品識別番号を識別できません。');
+        var i;
+        if(!job.layout || !job.layout.length) throw Error('商品とサイズをカタログから選んでください。');
         dst=app.documents.add(DocumentColorSpace.CMYK,566.9291,566.9291);
-        var copies=[];
-        copies.push(ring.duplicate(dst,ElementPlacement.PLACEATEND));
-        var rb=ring.geometricBounds, db=copies[0].geometricBounds;
-        copies[0].translate(rb[0]-db[0],rb[1]-db[1]);
+        var copies=[], measuredRings=[];
+        function ringShape(document,group){
+            var best=null,area=-1;
+            function visit(item){
+                if(item.typename==='PathItem') {var sb=item.geometricBounds,sa=(sb[2]-sb[0])*(sb[1]-sb[3]);if(sa>area){area=sa;best=item;}}
+                else if(item.typename==='CompoundPathItem'){for(var sj=0;sj<item.pathItems.length;sj++)visit(item.pathItems[sj]);}
+                else if(item.typename==='GroupItem'){for(var sk=0;sk<item.pageItems.length;sk++)visit(item.pageItems[sk]);}
+            }
+            visit(group);
+            return best;
+        }
         function replace(original, value, baseCount) {
             var box=original.geometricBounds, p=original.duplicate(dst,ElementPlacement.PLACEATEND);
             if(p.kind===TextType.AREATEXT) { p.remove(); p=dst.textFrames.add(); p.name=original.name; p.textRange.characterAttributes.textFont=original.textRange.characterAttributes.textFont; p.textRange.characterAttributes.size=original.textRange.characterAttributes.size; p.textRange.characterAttributes.fillColor=original.textRange.characterAttributes.fillColor; }
@@ -84,20 +66,68 @@
             p.translate((box[0]+box[2]-b[0]-b[2])/2,(box[1]+box[3]-b[1]-b[3])/2);
             copies.push(p);return p;
         }
-        replace(central,job.mark,0);
-        replace(years[side],job.year,8);
-        replace(shops[side],job.shop,5);
-        var numberCopy=productNumber.duplicate(dst,ElementPlacement.PLACEATEND);
-        var sourceNumberBounds=productNumber.geometricBounds, copiedNumberBounds=numberCopy.geometricBounds;
-        numberCopy.translate(sourceNumberBounds[0]-copiedNumberBounds[0],sourceNumberBounds[1]-copiedNumberBounds[1]);
-        numberCopy.name='DTF商品識別番号';
-        copies.push(numberCopy);
+        for(var partIndex=0;partIndex<job.layout.length;partIndex++) {
+            var firstCopyIndex=copies.length;
+            var part=job.layout[partIndex];
+            var central=src.textFrames[part.central], ring=src.groupItems[part.ring];
+            if(!central || !ring) throw Error('選択した版が見つかりません。');
+            var ringCopy=ring.duplicate(dst,ElementPlacement.PLACEATEND);
+            var sourceShape=ringShape(src,ring);
+            if(sourceShape)measuredRings.push({copy:ringCopy,width:sourceShape.width,height:sourceShape.height});
+            var rb=ring.geometricBounds, db=ringCopy.geometricBounds;
+            ringCopy.translate(rb[0]-db[0],rb[1]-db[1]);
+            // Some templates group variable text with the ring. Replace it once only.
+            for(var ri=ringCopy.textFrames.length-1;ri>=0;ri--) {
+                var rn=ringCopy.textFrames[ri].name;
+                if(rn==='①-1文字'||rn==='①-2文字'||rn==='1文字'||rn==='2文字'||rn==='②'||rn==='③'||rn==='上段'||rn==='下段') ringCopy.textFrames[ri].remove();
+            }
+            copies.push(ringCopy);
+            replace(central,job.mark,0);
+            if(part.year!==null && part.year!==undefined)replace(src.textFrames[part.year],job.year,8);
+            if(part.shop!==null && part.shop!==undefined)replace(src.textFrames[part.shop],job.shop,5);
+            if(partIndex>0){
+                // Place the chest and back on a compact sheet; never scale their artwork to match.
+                var originalPart=part.bounds, mainPart=job.layout[0].bounds;
+                var dx=(mainPart[0]+mainPart[2]-originalPart[0]-originalPart[2])/2;
+                var dy=mainPart[1]+80-originalPart[3];
+                for(var pi=firstCopyIndex;pi<copies.length;pi++)copies[pi].translate(dx,dy);
+            }
+        }
+        // The original product number 9 and each new catalog code stay on the print sheet.
+        var first=job.layout[0].bounds;
+        var numberCopy;
+        if(job.layout[0].marker!==null && job.layout[0].marker!==undefined){
+            var originalNumber=src.textFrames[job.layout[0].marker];numberCopy=originalNumber.duplicate(dst,ElementPlacement.PLACEATEND);
+            var originalBounds=originalNumber.geometricBounds,copiedBounds=numberCopy.geometricBounds;
+            numberCopy.translate(originalBounds[0]-copiedBounds[0],originalBounds[1]-copiedBounds[1]);
+        }else{
+            numberCopy=dst.textFrames.add();numberCopy.contents=String(job.printId || job.productCode || '9');
+            numberCopy.textRange.characterAttributes.size=12;
+            numberCopy.textRange.characterAttributes.textFont=app.textFonts.getByName('HGPEdomojiKanteiryu');
+            numberCopy.textRange.characterAttributes.fillColor=src.textFrames[job.layout[0].central].textRange.characterAttributes.fillColor;
+            numberCopy.position=[first[0],first[1]+28];
+        }
+        numberCopy.name='DTF商品識別番号';copies.push(numberCopy);
+        var collarRight=job.layout[0].bounds[2]+36;
+        for(var ci=0;ci<(job.collarFrames || []).length;ci++){
+            var collar=replace(src.textFrames[job.collarFrames[ci]],job.collarText || job.shop,0);
+            var cb=collar.geometricBounds;
+            collar.translate(collarRight-cb[0],job.layout[0].bounds[1]-cb[1]);
+            collarRight+=cb[2]-cb[0]+18;
+        }
         var design=dst.groupItems.add();
         for(i=0;i<copies.length;i++) copies[i].move(design,ElementPlacement.PLACEATEND);
         var bounds=design.geometricBounds;
-        var scale=job.widthMM ? (Number(job.widthMM)*72/25.4)/(bounds[2]-bounds[0])*100 : 100;
+        var scale=job.widthMM ? (Number(job.widthMM)*72/25.4)/(bounds[2]-bounds[0])*100 : (Number(job.templateScale)||1)*100;
         if(!isFinite(scale) || scale<=0) throw Error('寸法が不正です。');
         design.resize(scale,scale);
+        var measures=[];
+        for(var mi=0;mi<measuredRings.length;mi++){
+            var expected=measuredRings[mi],actual=ringShape(dst,expected.copy);
+            if(!actual || Math.abs(actual.width-expected.width*scale/100)>0.05 || Math.abs(actual.height-expected.height*scale/100)>0.05)throw Error('元テンプレートの図形寸法を保持できませんでした。');
+            measures.push('{'+'"widthPt":'+actual.width+',"heightPt":'+actual.height+',"sourceWidthPt":'+expected.width+',"sourceHeightPt":'+expected.height+',"scale":'+scale/100+'}');
+        }
+        var metrics=new File(out.fsName+'/'+id+'-metrics.json');metrics.open('w');metrics.write('['+measures.join(',')+']');metrics.close();
         bounds=design.geometricBounds;
         var margin=12, width=bounds[2]-bounds[0], height=bounds[1]-bounds[3];
         design.translate(margin-bounds[0],height+margin-bounds[1]);
