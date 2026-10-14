@@ -733,3 +733,12 @@ h1 {
 [hidden] { display: none !important; }
 
 .panel { height: auto; min-height: calc(100vh - 36px); }
+
+.shirt-picker { margin: 16px 0 0; padding: 10px; border: 1px solid var(--line); border-radius: 6px; }
+.shirt-picker legend { color: var(--gold); font-weight: 700; }
+.shirt-buttons { display: flex; gap: 10px; }
+.shirt-buttons button { flex: 1; border: 2px solid transparent; }
+#shirtBlack { background: #000; color: #fff; }
+#shirtWhite { background: #fff; color: #000; }
+.shirt-buttons button[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+.shirt-picker small { display: block; margin-top: 10px; color: var(--muted); line-height: 1.5; }

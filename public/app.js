@@ -478,6 +478,7 @@ async function applyEditor() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         slug: current.slug,
+        shirtColor: current.shirtColor || "black",
         previousName: editTarget.item.name,
         variant: editTarget.item.name.replace(/\.png$/i, ""),
         orientation: editTarget.orientation,
@@ -527,6 +528,7 @@ async function generate() {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        shirtColor: selectedShirtColor,
         title: displayTitle(),
         text: textEl.value,
       }),
@@ -700,3 +702,14 @@ async function loadGoogleDriveStatus() {
   entry.replaceChildren(link);
 }
 loadGoogleDriveStatus().catch(()=>{});
+
+let selectedShirtColor = 'black';
+const shirtBlack = document.getElementById('shirtBlack');
+const shirtWhite = document.getElementById('shirtWhite');
+function chooseShirtColor(color) {
+  selectedShirtColor = color;
+  shirtBlack.setAttribute('aria-pressed', String(color === 'black'));
+  shirtWhite.setAttribute('aria-pressed', String(color === 'white'));
+}
+shirtBlack.addEventListener('click', () => chooseShirtColor('black'));
+shirtWhite.addEventListener('click', () => chooseShirtColor('white'));

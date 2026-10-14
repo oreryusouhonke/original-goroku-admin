@@ -279,12 +279,12 @@ async function handleGenerate(req, res) {
     await mkdir(outDir, { recursive: true });
 
     const payloadPath = path.join(outDir, "request.json");
-    await writeFile(payloadPath, JSON.stringify({ title, lines }, null, 2), "utf-8");
+    await writeFile(payloadPath, JSON.stringify({ title, lines, shirtColor: body.shirtColor === "white" ? "white" : "black" }, null, 2), "utf-8");
 
     await runGenerator(["--request", payloadPath, "--out", outDir]);
     const square = await listPngs(path.join(outDir, "正方形"), `/outputs/${encodeURIComponent(slug)}/%E6%AD%A3%E6%96%B9%E5%BD%A2`);
     const usageCount = await incrementUsageCount();
-    json(res, 200, { slug, title, lines, square, usageCount });
+    json(res, 200, { slug, title, lines, square, usageCount, shirtColor: body.shirtColor === "white" ? "white" : "black" });
 
   } catch (error) {
     json(res, 500, { error: String(error.message || error) });
@@ -311,7 +311,7 @@ async function handleEdit(req, res) {
     const filename = `${variant}_edit_${Date.now()}`;
     const payloadPath = path.join(outDir, `${filename}_request.json`);
     await mkdir(outDir, { recursive: true });
-    await writeFile(payloadPath, JSON.stringify({ lines }, null, 2), "utf-8");
+    await writeFile(payloadPath, JSON.stringify({ lines, shirtColor: body.shirtColor === "white" ? "white" : "black" }, null, 2), "utf-8");
 
     const edit = {
       variant,
