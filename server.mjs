@@ -1,7 +1,9 @@
+import { createDriveSync } from "./drive-sync.mjs";
+import { randomUUID, createHash } from "node:crypto";
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 import { createReadStream, existsSync } from "node:fs";
-import { copyFile, mkdir, readFile, readdir, stat, unlink, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, stat, unlink, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import nodemailer from "nodemailer";
@@ -16,7 +18,6 @@ const DEFAULT_DELIVERY_ROOT = process.platform === "win32"
   ? "\\\\LS220DD5E\\share\\\u30aa\u30ea\u30b8\u30ca\u30eb\u8a9e\u9332\u30c7\u30b6\u30a4\u30f3\u81ea\u52d5\u751f\u6210"
   : path.join(DATA_ROOT, "\u7d0d\u54c1\u30c7\u30fc\u30bf");
 const DELIVERY_ROOT = process.env.DELIVERY_ROOT || DEFAULT_DELIVERY_ROOT;
-const DECISIONS_PATH = path.join(DATA_ROOT, "\u7ba1\u7406\u753b\u9762_\u63a1\u7528\u30e1\u30e2.json");
 const USAGE_PATH = path.join(DATA_ROOT, "\u7ba1\u7406\u753b\u9762_\u5229\u7528\u56de\u6570.json");
 const NEXT_ENGINE_AUTH_PATH = path.join(DATA_ROOT, "next-engine-auth.json");
 const NEXT_ENGINE_CLIENT_ID = process.env.NEXT_ENGINE_CLIENT_ID || "";
@@ -52,6 +53,7 @@ function send(res, status, body, type = "application/json; charset=utf-8") {
 }
 
 function json(res, status, data) {
+  if (res.writableEnded || res.destroyed) return;
   send(res, status, JSON.stringify(data), "application/json; charset=utf-8");
 }
 
@@ -271,31 +273,19 @@ async function handleGenerate(req, res) {
     if (!lines.length) return json(res, 400, { error: "\u8a9e\u9332\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002" });
 
     const title = body.title?.trim() || lines.join("");
-    const slug = `${new Date().toISOString().replace(/[-:T.Z]/g, "").slice(0, 14)}_${safeSlug(title)}`;
+    await cleanupTemporary();
+    const slug = `temp_${randomUUID()}`;
     const outDir = path.join(OUTPUT_ROOT, slug);
     await mkdir(outDir, { recursive: true });
 
     const payloadPath = path.join(outDir, "request.json");
     await writeFile(payloadPath, JSON.stringify({ title, lines }, null, 2), "utf-8");
 
-    const script = path.join(__dirname, "tools", "generate_variants.py");
-    const child = spawn(PYTHON, [script, "--request", payloadPath, "--out", outDir], {
-      cwd: __dirname,
-      windowsHide: true,
-    });
+    await runGenerator(["--request", payloadPath, "--out", outDir]);
+    const square = await listPngs(path.join(outDir, "正方形"), `/outputs/${encodeURIComponent(slug)}/%E6%AD%A3%E6%96%B9%E5%BD%A2`);
+    const usageCount = await incrementUsageCount();
+    json(res, 200, { slug, title, lines, square, usageCount });
 
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", (data) => (stdout += data));
-    child.stderr.on("data", (data) => (stderr += data));
-    child.on("close", async (code) => {
-      if (code !== 0) {
-        return json(res, 500, { error: "\u751f\u6210\u306b\u5931\u6557\u3057\u307e\u3057\u305f\u3002", detail: stderr || stdout });
-      }
-      const square = await listPngs(path.join(outDir, "\u6b63\u65b9\u5f62"), `/outputs/${encodeURIComponent(slug)}/%E6%AD%A3%E6%96%B9%E5%BD%A2`);
-      const usageCount = await incrementUsageCount();
-      json(res, 200, { slug, title, lines, square, usageCount });
-    });
   } catch (error) {
     json(res, 500, { error: String(error.message || error) });
   }
@@ -343,19 +333,13 @@ async function handleEdit(req, res) {
     };
     const editPath = path.join(outDir, `${filename}_edit.json`);
     await writeFile(editPath, JSON.stringify(edit, null, 2), "utf-8");
-    const script = path.join(__dirname, "tools", "generate_variants.py");
-    const child = spawn(PYTHON, [script, "--request", payloadPath, "--out", outDir, "--edit", editPath], {
-      cwd: __dirname,
-      windowsHide: true,
-    });
-
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", (data) => (stdout += data));
-    child.stderr.on("data", (data) => (stderr += data));
-    child.on("close", (code) => {
-      if (code !== 0) {
-        return json(res, 500, { error: "編集画像の生成に失敗しました。", detail: stderr || stdout });
+    await runGenerator(["--request", payloadPath, "--out", outDir, "--edit", editPath]);
+      const previous = String(body.previousName || "");
+      if (new RegExp(`^${variant}(?:_edit_\\d+)?\\.png$`).test(previous)) {
+        const oldBase = previous.replace(/\.png$/, "");
+        const targets = [path.join(outDir, "正方形", previous), path.join(outDir, "正方形", `${oldBase}.svg`), path.join(outDir, "正方形", `${oldBase}.design.json`),
+          path.join(outDir, `${oldBase}_request.json`), path.join(outDir, `${oldBase}_edit.json`)];
+        await Promise.all(targets.map(target => unlink(target).catch(() => {})));
       }
       const folder = "%E6%AD%A3%E6%96%B9%E5%BD%A2";
       const prefix = `/outputs/${encodeURIComponent(slug)}/${folder}`;
@@ -368,10 +352,97 @@ async function handleEdit(req, res) {
           svgUrl: `${prefix}/${encodeURIComponent(`${filename}.svg`)}`,
         },
       });
-    });
+
   } catch (error) {
     json(res, 500, { error: String(error.message || error) });
   }
+}
+
+const LEARNING_ROOT = path.join(DATA_ROOT, "合格デザイン_保存待ち");
+const LEARNING_DRIVE_FOLDER = "1YWIoTCkgHVaU-Ni8vTvUQ-p3d98RvZNQ";
+const GOOGLE_DRIVE_AUTH_PATH = path.join(DATA_ROOT, "google-drive-auth.json");
+const GOOGLE_DRIVE_REDIRECT_URI = "https://original-goroku-admin.onrender.com/api/google-drive/callback";
+const googleStates = new Map();
+async function googleCredentials() {
+  let auth = {};
+  try { auth = JSON.parse(await readFile(GOOGLE_DRIVE_AUTH_PATH, "utf-8")); } catch {}
+  return { clientId: process.env.GOOGLE_DRIVE_CLIENT_ID, clientSecret: process.env.GOOGLE_DRIVE_CLIENT_SECRET,
+    refreshToken: auth.refreshToken || process.env.GOOGLE_DRIVE_REFRESH_TOKEN };
+}
+const learningDrive = createDriveSync({rootFolderId: LEARNING_DRIVE_FOLDER, outboxRoot: LEARNING_ROOT,
+  credentials: googleCredentials});
+async function handleGoogleStatus(req, res) {
+  const c = await googleCredentials();
+  json(res, 200, { configured: Boolean(c.clientId && c.clientSecret), connected: Boolean(c.refreshToken),
+    folderUrl: `https://drive.google.com/drive/folders/${LEARNING_DRIVE_FOLDER}` });
+}
+function handleGoogleConnect(req, res) {
+  if (!process.env.GOOGLE_DRIVE_CLIENT_ID || !process.env.GOOGLE_DRIVE_CLIENT_SECRET)
+    return json(res, 503, { error: "Google接続設定が未完了です。" });
+  for (const [key, expires] of googleStates) if (expires < Date.now()) googleStates.delete(key);
+  const state = randomUUID();googleStates.set(state, Date.now() + 10 * 60000);
+  const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  for (const [key, value] of Object.entries({client_id:process.env.GOOGLE_DRIVE_CLIENT_ID,
+    redirect_uri:GOOGLE_DRIVE_REDIRECT_URI,response_type:"code",scope:"https://www.googleapis.com/auth/drive",
+    access_type:"offline",prompt:"consent",state})) url.searchParams.set(key,value);
+  res.writeHead(302, {location:url.toString(),"cache-control":"no-store",
+    "set-cookie":`goroku_google_state=${state}; HttpOnly; Secure; SameSite=Lax; Max-Age=600; Path=/api/google-drive`});res.end();
+}
+async function handleGoogleCallback(req, res) {
+  const url = new URL(req.url, "https://local.invalid");
+  const state = url.searchParams.get("state");
+  const cookie = /(?:^|;\s*)goroku_google_state=([^;]+)/.exec(req.headers.cookie || "")?.[1];
+  if (!state || cookie !== state || (googleStates.get(state) || 0) < Date.now())
+    return json(res, 400, {error:"Google接続を最初からやり直してください。"});
+  googleStates.delete(state);
+  const code = url.searchParams.get("code");
+  if (!code) return json(res, 400, {error:"Google接続が許可されませんでした。"});
+  try {
+    const response = await fetch("https://oauth2.googleapis.com/token", {method:"POST",
+      body:new URLSearchParams({client_id:process.env.GOOGLE_DRIVE_CLIENT_ID,
+        client_secret:process.env.GOOGLE_DRIVE_CLIENT_SECRET,code,redirect_uri:GOOGLE_DRIVE_REDIRECT_URI,
+        grant_type:"authorization_code"}),signal:AbortSignal.timeout(30000)});
+    const result = await response.json();
+    if (!response.ok || !result.refresh_token) throw new Error("Google接続に失敗しました。");
+    await writeFile(GOOGLE_DRIVE_AUTH_PATH, JSON.stringify({refreshToken:result.refresh_token,
+      updatedAt:new Date().toISOString()}), {mode:0o600});
+    setImmediate(() => learningDrive.drain());
+    res.writeHead(302, {location:"/?googleDrive=connected","cache-control":"no-store",
+      "set-cookie":"goroku_google_state=; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Path=/api/google-drive"});res.end();
+  } catch { json(res,500,{error:"Google接続に失敗しました。再度お試しください。"}); }
+}
+function characterCount(lines) {
+  // Count visible graphemes (including punctuation), excluding whitespace/newlines.
+  const text = lines.join("").replace(/\s/gu, "");
+  return [...new Intl.Segmenter("ja", { granularity: "grapheme" }).segment(text)].length;
+}
+async function archiveLearning(sourceDir, filename) {
+  const stem = filename.replace(/\.png$/, "");
+  const design = JSON.parse(await readFile(path.join(sourceDir, `${stem}.design.json`), "utf-8"));
+  const count = characterCount(design.lines);
+  if (!count) throw new Error("文字数を確認できませんでした。");
+  const svg = await readFile(path.join(sourceDir, `${stem}.svg`));
+  const png = await readFile(path.join(sourceDir, filename));
+  // Hash design and finished outputs, so identical accepted work is stored once.
+  const id = createHash("sha256").update(JSON.stringify(design)).update(svg).update(png).digest("hex");
+  const folderName = `${count}文字`;
+  const sampleDir = path.join(LEARNING_ROOT, folderName, id);
+  const syncPath = path.join(sampleDir, "drive-sync.json");
+  if (existsSync(syncPath)) {
+    const existing = JSON.parse(await readFile(syncPath, "utf-8"));
+    if (existing.status === "uploaded") return { archived: true, characterCount: count, driveStatus: "uploaded", folderUrl: existing.folderUrl };
+  }
+  await mkdir(sampleDir, { recursive: true });
+  await writeFile(path.join(sampleDir, "確認.png"), png);
+  await writeFile(path.join(sampleDir, "製作.svg"), svg);
+  await writeFile(path.join(sampleDir, "配置.json"), JSON.stringify({ ...design, sampleId: id,
+    characterCount: count, lineCount: design.lines.length, countRule: "改行・空白を除いた表示文字（記号を含む）" }, null, 2));
+  if (!existsSync(syncPath)) await writeFile(syncPath, JSON.stringify({ status: "pending",
+    rootFolderId: LEARNING_DRIVE_FOLDER, characterFolder: folderName,
+    sampleFolder: `${count}文字_${design.lines.length}行_${id.slice(0, 12)}`,
+    files: ["確認.png", "製作.svg", "配置.json"] }, null, 2));
+  setImmediate(() => learningDrive.drain());
+  return { archived: true, characterCount: count, driveStatus: "pending" };
 }
 
 async function handleDecision(req, res) {
@@ -383,7 +454,13 @@ async function handleDecision(req, res) {
     const title = body.title || slug;
     const customerName = body.customerName || "";
     const orderNumber = body.orderNumber || "";
-    const sourceDir = path.join(OUTPUT_ROOT, body.slug, orientationFolder);
+    if (String(body.slug) !== slug || !/^(A_center|B_stagger|C_dense)(?:_edit_\d+)?\.png$/.test(filename || "")) {
+      return json(res, 400, { error: "採用する案を確認できませんでした。" });
+    }
+    const sourceDir = path.join(OUTPUT_ROOT, slug, orientationFolder);
+    if (!existsSync(path.join(sourceDir, filename)) || !existsSync(path.join(sourceDir, filename.replace(/\.png$/, ".svg")))) {
+      return json(res, 404, { error: "採用する案が見つかりません。作り直してください。" });
+    }
     const pngSource = path.join(sourceDir, filename || "");
     const svgSource = path.join(sourceDir, String(filename || "").replace(/\.png$/i, ".svg"));
     const approvedDir = path.join(APPROVED_ROOT, slug);
@@ -450,28 +527,10 @@ async function handleDecision(req, res) {
     );
     await copyFile(csvPath, deliveryCsvPath);
 
-    const current = existsSync(DECISIONS_PATH)
-      ? JSON.parse(await readFile(DECISIONS_PATH, "utf-8"))
-      : [];
-    current.unshift({
-      savedAt: new Date().toISOString(),
-      slug: body.slug,
-      title,
-      customerName,
-      orderNumber,
-      selected: body.selected,
-      pngPath,
-      svgPath,
-      deliveryFolder: deliveryDir,
-      deliveryPngPath: namingData.deliveryPngPath,
-      deliverySvgPath: namingData.deliverySvgPath,
-      namingJsonPath: jsonPath,
-      namingCsvPath: csvPath,
-      deliveryNamingJsonPath: deliveryJsonPath,
-      deliveryNamingCsvPath: deliveryCsvPath,
-      note: body.note || "",
-    });
-    await writeFile(DECISIONS_PATH, JSON.stringify(current.slice(0, 500), null, 2), "utf-8");
+    let learning;
+    try { learning = await archiveLearning(sourceDir, filename); }
+    catch { learning = { archived: false, warning: "採用データは保存しましたが、合格作例の保存に失敗しました。" }; }
+    // 採用情報は納品フォルダーに保存。全件履歴は蓄積しない。
     json(res, 200, {
       ok: true,
       pngPath,
@@ -483,6 +542,7 @@ async function handleDecision(req, res) {
       namingCsvPath: csvPath,
       deliveryNamingJsonPath: deliveryJsonPath,
       deliveryNamingCsvPath: deliveryCsvPath,
+      learning,
       approvedPngUrl: pngPath ? `/approved/${encodeURIComponent(slug)}/${encodeURIComponent(path.basename(pngPath))}` : "",
       approvedSvgUrl: svgPath ? `/approved/${encodeURIComponent(slug)}/${encodeURIComponent(path.basename(svgPath))}` : "",
       approvedNamingJsonUrl: `/approved/${encodeURIComponent(slug)}/${encodeURIComponent(path.basename(jsonPath))}`,
@@ -639,7 +699,7 @@ async function serveOutput(req, res) {
   const info = await stat(target);
   if (!info.isFile()) return send(res, 404, "Not found", "text/plain");
   const ext = path.extname(target).toLowerCase();
-  res.writeHead(200, { "content-type": MIME[ext] || "application/octet-stream", "cache-control": "no-store" });
+  res.writeHead(200, { "content-type": MIME[ext] || "application/octet-stream", "cache-control": "private, max-age=3600" });
   createReadStream(target).pipe(res);
 }
 
@@ -667,17 +727,72 @@ async function serveStatic(req, res) {
   createReadStream(target).pipe(res);
 }
 
+
+// Run one expensive request at a time; keep a bounded queue across all clients.
+let processing = false;
+const workQueue = [];
+function serialized(req, res, handler) {
+  if (processing && workQueue.length >= 4) {
+    res.setHeader("retry-after", "5");
+    return json(res, 503, { error: "作成が混み合っています。少し待って再度お試しください。" });
+  }
+  const next = () => { processing = false; const task = workQueue.shift(); if (task) task(); };
+  const run = async () => {
+    if (res.destroyed) return next();
+    processing = true;
+    try { await handler(req, res); }
+    catch { json(res, 500, { error: "処理に失敗しました。" }); }
+    finally { next(); }
+  };
+  if (processing) workQueue.push(run); else run();
+}
+function runGenerator(args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(PYTHON, [path.join(__dirname, "tools", "generate_variants.py"), ...args],
+      { cwd: __dirname, windowsHide: true });
+    let stderr = "";
+    child.stdout.resume();
+    child.stderr.on("data", chunk => { stderr = (stderr + chunk).slice(-2000); });
+    child.once("error", () => reject(new Error("画像生成処理を起動できませんでした。")));
+    child.once("close", code => code === 0 ? resolve() : reject(new Error("画像生成に失敗しました。")));
+  });
+}
+function temporaryDir(slug) {
+  if (!/^temp_[0-9a-f-]{36}$/.test(String(slug))) throw new Error("一時データを確認できません。");
+  const target = path.resolve(OUTPUT_ROOT, slug);
+  if (path.dirname(target) !== path.resolve(OUTPUT_ROOT)) throw new Error("invalid path");
+  return target;
+}
+async function cleanupTemporary() {
+  if (!existsSync(OUTPUT_ROOT)) return;
+  for (const entry of await readdir(OUTPUT_ROOT, { withFileTypes: true })) {
+    if (!entry.isDirectory() || !/^temp_[0-9a-f-]{36}$/.test(entry.name)) continue;
+    const target = temporaryDir(entry.name);
+    const info = await stat(target);
+    if (Date.now() - info.mtimeMs > 24 * 60 * 60 * 1000) await rm(target, { recursive: true, force: true });
+  }
+}
+async function handleRelease(req, res) {
+  const body = await readJsonBody(req);
+  await rm(temporaryDir(body.slug), { recursive: true, force: true });
+  json(res, 200, { ok: true });
+}
+
 const server = createServer(async (req, res) => {
   if (req.method === "GET" && req.url.startsWith("/api/next-engine/callback")) return handleNextEngineCallback(req, res);
   if (!authorized(req)) return requireAuth(res);
+  if (req.method === "GET" && req.url === "/api/google-drive/status") return handleGoogleStatus(req, res);
+  if (req.method === "GET" && req.url === "/api/google-drive/connect") return handleGoogleConnect(req, res);
+  if (req.method === "GET" && req.url.startsWith("/api/google-drive/callback?")) return handleGoogleCallback(req, res);
   if (req.method === "GET" && req.url === "/api/next-engine/connect") return handleNextEngineConnect(req, res);
   if (req.method === "GET" && req.url === "/api/next-engine/status") return handleNextEngineStatus(req, res);
   if (req.method === "GET" && req.url.startsWith("/api/next-engine/order?")) return handleNextEngineOrder(req, res);
   if (req.method === "GET" && req.url === "/api/usage") return handleUsage(req, res);
-  if (req.method === "POST" && req.url === "/api/generate") return handleGenerate(req, res);
-  if (req.method === "POST" && req.url === "/api/edit") return handleEdit(req, res);
-  if (req.method === "POST" && req.url === "/api/decision") return handleDecision(req, res);
-  if (req.method === "POST" && req.url === "/api/customer-email") return handleCustomerEmail(req, res);
+  if (req.method === "POST" && req.url === "/api/release") return serialized(req, res, handleRelease);
+  if (req.method === "POST" && req.url === "/api/generate") return serialized(req, res, handleGenerate);
+  if (req.method === "POST" && req.url === "/api/edit") return serialized(req, res, handleEdit);
+  if (req.method === "POST" && req.url === "/api/decision") return serialized(req, res, handleDecision);
+  if (req.method === "POST" && req.url === "/api/customer-email") return serialized(req, res, handleCustomerEmail);
   if (req.method === "GET" && req.url.startsWith("/outputs/")) return serveOutput(req, res);
   if (req.method === "GET" && req.url.startsWith("/approved/")) return serveApproved(req, res);
   return serveStatic(req, res);
@@ -687,3 +802,6 @@ const port = Number(process.env.PORT || 8792);
 server.listen(port, "0.0.0.0", () => {
   console.log(`ORERYU goroku admin: http://127.0.0.1:${port}`);
 });
+
+// Retry pending uploads within the existing server process; no separate service.
+setInterval(() => learningDrive.drain(), 60000).unref();

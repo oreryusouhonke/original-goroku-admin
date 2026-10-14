@@ -12,7 +12,7 @@ RUN pip3 install --break-system-packages --no-cache-dir -r requirements.txt
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-COPY server.mjs ./
+COPY server.mjs drive-sync.mjs ./
 COPY assets ./assets
 COPY public ./public
 COPY tools ./tools
