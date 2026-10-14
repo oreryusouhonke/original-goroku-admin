@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from functools import lru_cache
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -14,7 +15,7 @@ from fontTools.ttLib import TTFont
 
 INK = (35, 23, 19, 255)
 SQUARE_CANVAS = (3543, 3543)
-PRINT_DPI = 300
+PREVIEW_SIZE = 900
 FONT = Path(__file__).resolve().parents[1] / "assets" / "KONSHIN.TTF"
 TT_FONT = TTFont(str(FONT))
 GLYPH_SET = TT_FONT.getGlyphSet()
@@ -33,8 +34,13 @@ def char_metrics(text: str, font: ImageFont.FreeTypeFont) -> tuple[int, int]:
     return width, height
 
 
+@lru_cache(maxsize=128)
+def load_font(size: int):
+    return ImageFont.truetype(str(FONT), size)
+
+
 def column_size(item: dict, base: int) -> tuple:
-    font = ImageFont.truetype(str(FONT), max(40, int(base * item["scale"])))
+    font = load_font(max(40, int(base * item["scale"])))
     draw = ImageDraw.Draw(Image.new("L", (10, 10)))
     sizes = []
     width = 0
@@ -195,9 +201,17 @@ def placement_data(canvas: tuple[int, int], spec: list[dict], glyph_edits: list[
     return placed
 
 
-def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None) -> None:
+def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None, placed=None) -> None:
+    placed = placed if placed is not None else placement_data(canvas, spec, glyph_edits)
+    ratio = PREVIEW_SIZE / canvas[0]
+    canvas = (PREVIEW_SIZE, PREVIEW_SIZE)
     image = Image.new("RGBA", canvas, (0, 0, 0, 0))
-    for item in placement_data(canvas, spec, glyph_edits):
+    for original in placed:
+        item = dict(original)
+        item["font"] = load_font(max(1, round(original["font"].size * ratio)))
+        item["bbox"] = item["font"].getbbox(item["char"])
+        for key in ("left", "top", "width", "height"):
+            item[key] *= ratio
         glyph_pad = int(item["font"].size * 0.45)
         glyph = Image.new(
             "RGBA",
@@ -228,9 +242,10 @@ def draw_variant(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_ed
             image = Image.new("RGBA", canvas, (0, 0, 0, 0))
             image.alpha_composite(resized, ((canvas[0] - resized.width) // 2, (canvas[1] - resized.height) // 2))
     path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path, dpi=(PRINT_DPI, PRINT_DPI))
+    image.save(path)
 
 
+@lru_cache(maxsize=512)
 def glyph_path(char: str) -> tuple[str, str] | None:
     glyph_name = CMAP.get(ord(char))
     if not glyph_name or glyph_name not in GLYPH_SET:
@@ -240,9 +255,9 @@ def glyph_path(char: str) -> tuple[str, str] | None:
     return pen.getCommands(), glyph_name
 
 
-def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None) -> None:
+def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits: list[dict] | None = None, placed=None) -> None:
     paths = []
-    placed = placement_data(canvas, spec, glyph_edits)
+    placed = placed if placed is not None else placement_data(canvas, spec, glyph_edits)
     if placed:
         min_x = min(item["left"] for item in placed)
         min_y = min(item["top"] for item in placed)
@@ -298,6 +313,14 @@ def write_svg(canvas: tuple[int, int], spec: list[dict], path: Path, glyph_edits
     path.write_text(svg, encoding="utf-8")
 
 
+def write_design(path: Path, lines: list[str], variant: str, edit: dict | None = None) -> None:
+    # Keep only rendering inputs, never order/customer details or local paths.
+    params = {key: edit[key] for key in ("scale", "offsetX", "offsetY", "rotation", "spacing", "charEdits") if edit and key in edit}
+    path.write_text(json.dumps({"schemaVersion": 1, "lines": lines, "variant": variant,
+        "orientation": "square", "svgSizeMm": [300, 300], "previewSize": [900, 900],
+        "font": FONT.name, "edit": params}, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--request", required=True)
@@ -320,12 +343,16 @@ def main() -> None:
         filename = edit.get("filename", f"{variant}_edit")
         spec = apply_edits(specs[variant], edit)
         glyph_edits = edit.get("charEdits") or []
-        draw_variant(canvas, spec, out / folder / f"{filename}.png", glyph_edits)
-        write_svg(canvas, spec, out / folder / f"{filename}.svg", glyph_edits)
+        placed = placement_data(canvas, spec, glyph_edits)
+        draw_variant(canvas, spec, out / folder / f"{filename}.png", glyph_edits, placed)
+        write_svg(canvas, spec, out / folder / f"{filename}.svg", glyph_edits, placed)
+        write_design(out / folder / f"{filename}.design.json", lines, variant, edit)
         return
     for name, spec in specs.items():
-        draw_variant(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.png")
-        write_svg(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.svg")
+        placed = placement_data(SQUARE_CANVAS, spec)
+        draw_variant(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.png", placed=placed)
+        write_svg(SQUARE_CANVAS, spec, out / "\u6b63\u65b9\u5f62" / f"{name}.svg", placed=placed)
+        write_design(out / "\u6b63\u65b9\u5f62" / f"{name}.design.json", lines, name)
 
 
 if __name__ == "__main__":

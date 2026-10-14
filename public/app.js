@@ -163,7 +163,7 @@ function render() {
         <h2>${labelFor(item.name)}</h2>
         <span>${item.viewName}</span>
       </header>
-      <img src="${item.url}" alt="${labelFor(item.name)}" />
+      <img decoding="async" src="${item.url}" alt="${labelFor(item.name)}" />
       <footer>
         <button class="edit" data-edit="${item.view}:${item.name}">編集</button>
         <button class="adopt" data-select="${item.view}:${item.name}">この案を採用</button>
@@ -194,7 +194,7 @@ function openEmailPreview() {
   emailPreviewGridEl.innerHTML = items.map((item) => `
     <figure>
       <figcaption>${labelFor(item.name)}</figcaption>
-      <img src="${item.url}" alt="${labelFor(item.name)}の送信プレビュー" />
+      <img decoding="async" src="${item.url}" alt="${labelFor(item.name)}の送信プレビュー" />
     </figure>
   `).join("");
   emailConfirmedEl.checked = false;
@@ -452,7 +452,7 @@ async function openEditor(selected) {
   if (!item) return;
   editTarget = { orientation, item };
   editorTitleEl.textContent = `${labelFor(filename)}を編集`;
-  editorTextEl.value = current.lines.join("\n");
+  editorTextEl.value = (item.lines || current.lines).join("\n");
   characterEdits = characterText().map(defaultCharacterEdit);
   selectedCharacterIndex = characterEdits.length ? 0 : -1;
   renderCharacterList();
@@ -478,6 +478,7 @@ async function applyEditor() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         slug: current.slug,
+        previousName: editTarget.item.name,
         variant: editTarget.item.name.replace(/\.png$/i, ""),
         orientation: editTarget.orientation,
         text: editorTextEl.value,
@@ -492,11 +493,14 @@ async function applyEditor() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "修正版の生成に失敗しました。");
     const list = current.square;
-    list.push(data.item);
-    current.lines = editorTextEl.value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const index = list.findIndex(item => item.name === editTarget.item.name);
+    data.item.lines = editorTextEl.value.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    if (index >= 0) list[index] = data.item;
+    adoptedItem = null;
+
     render();
     editorDialogEl.close();
-    setStatus("修正版を追加しました。確認して、そのまま採用・保存できます。", "ok");
+    setStatus("修正版に更新しました。確認して、そのまま採用・保存できます。", "ok");
   } catch (error) {
     setStatus(error.message, "error");
   } finally {
@@ -529,6 +533,7 @@ async function generate() {
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "生成に失敗しました。");
+    releaseTemporary(current?.slug);
     current = data;
     setUsageCount(data.usageCount);
     setStatus("3案ができました。良い案を選んで「この案を採用」を押してください。", "ok");
@@ -580,6 +585,7 @@ async function saveDecision(selected) {
 
 generateEl.addEventListener("click", generate);
 clearEl.addEventListener("click", () => {
+  releaseTemporary(current?.slug);
   customerNameEl.value = "";
   orderNumberEl.value = "";
   textEl.value = "";
@@ -673,3 +679,24 @@ sendCustomerEmailEl.addEventListener("click", sendCustomerEmail);
 
 loadUsageCount();
 loadNextEngineStatus();
+
+function releaseTemporary(slug) {
+  if (!slug) return;
+  fetch("/api/release", { method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ slug }) }).catch(() => {});
+}
+
+// Admin-only Drive connection entry; no credentials are exposed to the browser.
+async function loadGoogleDriveStatus() {
+  const response = await fetch("/api/google-drive/status");
+  if (!response.ok) return;
+  const data = await response.json();
+  let entry = document.querySelector("#googleDriveConnection");
+  if (!entry) {entry = document.createElement("div");entry.id="googleDriveConnection";
+    statusEl.insertAdjacentElement("afterend", entry);}
+  const link=document.createElement("a");
+  link.textContent=data.connected ? "合格デザイン：Googleドライブ接続済み" : data.configured ? "Googleドライブに接続する" : "Googleドライブの保存設定待ち";
+  link.href=data.connected ? data.folderUrl : data.configured ? "/api/google-drive/connect" : "#";
+  entry.replaceChildren(link);
+}
+loadGoogleDriveStatus().catch(()=>{});
