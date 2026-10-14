@@ -73,6 +73,7 @@
             if(!central || !ring) throw Error('選択した版が見つかりません。');
             var ringCopy=ring.duplicate(dst,ElementPlacement.PLACEATEND);
             var sourceShape=ringShape(src,ring);
+            if(!sourceShape)throw Error('丸枠の図形が見つかりません。商品テンプレートの対応を確認してください。');
             if(sourceShape)measuredRings.push({copy:ringCopy,width:sourceShape.width,height:sourceShape.height});
             var rb=ring.geometricBounds, db=ringCopy.geometricBounds;
             ringCopy.translate(rb[0]-db[0],rb[1]-db[1]);
