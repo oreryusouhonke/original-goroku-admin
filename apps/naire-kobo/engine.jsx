@@ -32,7 +32,10 @@
         var sourceBoard=src.artboards[0].artboardRect;
         sourceBoard=[sourceBoard[0],sourceBoard[1],sourceBoard[2],sourceBoard[3]];
         dst=app.documents.add(DocumentColorSpace.CMYK,sourceBoard[2]-sourceBoard[0],sourceBoard[1]-sourceBoard[3]);
-        dst.artboards[0].artboardRect=sourceBoard;
+        try {dst.artboards[0].artboardRect=sourceBoard;} catch(boardPositionError) {
+            // Preserve width/height even if the source origin lies outside the new canvas.
+            var positionedBoard=dst.artboards[0].artboardRect;sourceBoard=[positionedBoard[0],positionedBoard[1],positionedBoard[2],positionedBoard[3]];
+        }
         var sourceBackground=null;
         if(job.printBackground){
             if(job.background){sourceBackground=src.layers[job.background.layer].pageItems[job.background.item];}
