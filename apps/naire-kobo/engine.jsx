@@ -135,7 +135,7 @@
         numberCopy.name='DTF商品識別番号';copies.push(numberCopy);
         var collarRight=job.layout[0].bounds[2]+36;
         for(var ci=0;ci<(job.collarFrames || []).length;ci++){
-            var collar=replace(src.textFrames[job.collarFrames[ci]],job.collarText || job.shop,0);
+            var collar=replace(src.textFrames[job.collarFrames[ci]],job.collarText || job.shop,0);artworkCopies.push(collar);
             var cb=collar.geometricBounds;
             collar.translate(collarRight-cb[0],job.layout[0].bounds[1]-cb[1]);
             collarRight+=cb[2]-cb[0]+18;
