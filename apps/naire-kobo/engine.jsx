@@ -56,7 +56,7 @@
             var sbg=sourceBackground.geometricBounds;
             if(Math.abs((sbg[2]-sbg[0])-(sourceBoard[2]-sourceBoard[0]))>0.05||Math.abs((sbg[1]-sbg[3])-(sourceBoard[1]-sourceBoard[3]))>0.05)throw Error('背景と元アートボードの寸法が一致しません。 board='+sourceBoard+' bg='+sbg);
         }
-        var copies=[], measuredRings=[];
+        var copies=[], measuredRings=[], numberCopies=[];
         function ringShape(document,group){
             var best=null,area=-1;
             function visit(item){
@@ -112,6 +112,22 @@
             replace(central,job.mark,0);
             if(part.year!==null && part.year!==undefined)replace(src.textFrames[part.year],job.year,8);
             if(part.shop!==null && part.shop!==undefined)replace(src.textFrames[part.shop],job.shop,5);
+            var numberCopy;
+            if(part.marker!==null&&part.marker!==undefined){
+                numberCopy=src.textFrames[part.marker].duplicate(dst,ElementPlacement.PLACEATEND);
+            }else{
+                numberCopy=dst.textFrames.add();numberCopy.contents=String(job.printId||job.productCode||'9');
+                numberCopy.textRange.characterAttributes.size=12;
+                numberCopy.textRange.characterAttributes.textFont=app.textFonts.getByName('HGPEdomojiKanteiryu');
+                numberCopy.textRange.characterAttributes.fillColor=central.textRange.characterAttributes.fillColor;
+            }
+            numberCopy.textRange.characterAttributes.fillColor=central.textRange.characterAttributes.fillColor;
+            var nb=numberCopy.geometricBounds;
+            if(nb[1]-nb[3]>12)numberCopy.resize(12/(nb[1]-nb[3])*100,12/(nb[1]-nb[3])*100);
+            nb=numberCopy.geometricBounds;
+            numberCopy.translate((part.bounds[0]+part.bounds[2]-nb[0]-nb[2])/2,part.bounds[1]+16-nb[1]);
+            numberCopy.name=partIndex===0?'DTF商品識別番号':'DTF商品識別番号-前面';
+            copies.push(numberCopy);numberCopies.push(numberCopy);
             if(partIndex>0){
                 // Place the chest and back on a compact sheet; never scale their artwork to match.
                 var originalPart=part.bounds, mainPart=job.layout[0].bounds;
@@ -120,22 +136,8 @@
                 for(var pi=firstCopyIndex;pi<copies.length;pi++)copies[pi].translate(dx,dy);
             }
         }
-        // The original product number 9 and each new catalog code stay on the print sheet.
-        var artworkCopies=copies.slice(0);
-        var first=job.layout[0].bounds;
-        var numberCopy;
-        if(job.layout[0].marker!==null && job.layout[0].marker!==undefined){
-            var originalNumber=src.textFrames[job.layout[0].marker];numberCopy=originalNumber.duplicate(dst,ElementPlacement.PLACEATEND);
-            var originalBounds=originalNumber.geometricBounds,copiedBounds=numberCopy.geometricBounds;
-            numberCopy.translate(originalBounds[0]-copiedBounds[0],originalBounds[1]-copiedBounds[1]);
-        }else{
-            numberCopy=dst.textFrames.add();numberCopy.contents=String(job.printId || job.productCode || '9');
-            numberCopy.textRange.characterAttributes.size=12;
-            numberCopy.textRange.characterAttributes.textFont=app.textFonts.getByName('HGPEdomojiKanteiryu');
-            numberCopy.textRange.characterAttributes.fillColor=src.textFrames[job.layout[0].central].textRange.characterAttributes.fillColor;
-            numberCopy.position=[first[0],first[1]+28];
-        }
-        numberCopy.name='DTF商品識別番号';copies.push(numberCopy);
+        var artworkCopies=[];
+        for(var ac=0;ac<copies.length;ac++)if(copies[ac].name.indexOf('DTF商品識別番号')!==0)artworkCopies.push(copies[ac]);
         var collarRight=job.layout[0].bounds[2]+36;
         for(var ci=0;ci<(job.collarFrames || []).length;ci++){
             var collar=replace(src.textFrames[job.collarFrames[ci]],job.collarText || job.shop,0);artworkCopies.push(collar);
@@ -175,6 +177,13 @@
         bounds=[Infinity,-Infinity,-Infinity,Infinity];
         for(var ac=0;ac<artworkCopies.length;ac++){var ab=artworkCopies[ac].geometricBounds;bounds[0]=Math.min(bounds[0],ab[0]);bounds[1]=Math.max(bounds[1],ab[1]);bounds[2]=Math.max(bounds[2],ab[2]);bounds[3]=Math.min(bounds[3],ab[3]);}
         if(bounds[0]<sourceBoard[0]-0.5||bounds[2]>sourceBoard[2]+0.5||bounds[1]>sourceBoard[1]+0.5||bounds[3]<sourceBoard[3]-0.5)throw Error('柄が元アートボードに収まりません。幅指定を小さくしてください。アートボードは変更しません。 board='+sourceBoard+' artwork='+bounds);
+        // Keep identifiers in all board-clipped exports without resizing the board or designs.
+        for(var ni=0;ni<numberCopies.length;ni++){
+            var number=numberCopies[ni],nb=number.geometricBounds;
+            if(nb[0]<sourceBoard[0]||nb[2]>sourceBoard[2]||nb[1]>sourceBoard[1]||nb[3]<sourceBoard[3]){
+                number.translate(sourceBoard[2]-1-nb[2],sourceBoard[1]-1-nb[1]);
+            }
+        }
         dst.artboards[0].artboardRect=sourceBoard;
         var opts=new IllustratorSaveOptions();opts.pdfCompatible=true;
         dst.saveAs(aiFile,opts);
