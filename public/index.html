@@ -9,7 +9,7 @@
   <body>
     <main class="shell">
       <nav class="app-links" aria-label="作成ツール">
-        <a class="naire-launch" href="/naire-catalog.html">名入れ工房の商品を選ぶ</a>
+        <a class="naire-launch" href="/naire-catalog.html">名入れ工房 商品カタログ</a>
         <span>商品カタログから名入れアプリを起動</span>
       </nav>
       <section class="workspace">
@@ -31,6 +31,15 @@
             <div class="step"><b>2</b><span>3案確認</span></div>
             <div class="step"><b>3</b><span>採用保存</span></div>
           </div>
+
+          <fieldset class="shirt-picker">
+            <legend>Tシャツの色</legend>
+            <div class="shirt-buttons">
+              <button type="button" id="shirtBlack" aria-pressed="true">黒Tシャツ</button>
+              <button type="button" id="shirtWhite" aria-pressed="false">白Tシャツ</button>
+            </div>
+            <small>選んだ色でPNGを作成します。変更後は「3案を作る」を押してください。</small>
+          </fieldset>
 
           <label>
             <span>お客さん名（空欄OK）</span>
@@ -57,14 +66,7 @@
 みろよ</textarea>
           </label>
 
-          <fieldset class="shirt-picker">
-            <legend>Tシャツの色</legend>
-            <div class="shirt-buttons">
-              <button type="button" id="shirtBlack" aria-pressed="true">黒Tシャツ</button>
-              <button type="button" id="shirtWhite" aria-pressed="false">白Tシャツ</button>
-            </div>
-            <small>選んだ色でPNGを作成します。変更後は「3案を作る」を押してください。</small>
-          </fieldset>
+
           <div class="actions">
             <button id="generate" class="primary">3案を作る</button>
             <button id="clear" class="ghost">入力を消す</button>
