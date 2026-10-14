@@ -4,6 +4,13 @@ __pycache__/
 検証出力/
 出力/
 source.ai
+templates/
+.catalog-work/
+.catalog-inventory.jsx
+build-catalog.py
+make-catalog.py
+update-engine-catalog.py
+verify-catalog.py
 .env
 .env.*
 *.log

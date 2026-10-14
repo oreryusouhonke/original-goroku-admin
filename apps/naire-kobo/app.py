@@ -11,6 +11,8 @@ import uuid
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageTk
+from catalog import load_catalog, attach_product, parse_launch, image_path
+import webbrowser
 
 ROOT = Path(__file__).resolve().parent
 CACHE = ROOT / '.preview'
@@ -44,6 +46,13 @@ def generate(job):
         raise RuntimeError(message or 'Illustratorでの作成に失敗しました。')
     for suffix in ('.ai','.png','-outlined.pdf','-preview.png'):
         if not (folder/(job['id']+suffix)).is_file(): raise RuntimeError('出力が揃いませんでした。')
+    # Select a readable screen background without altering the manufacturing output.
+    with Image.open(folder/(job['id']+'.png')).convert('RGBA') as image:
+        pixels=[rgb for rgb in image.resize((100,100)).getdata() if rgb[3]>200]
+        light=not pixels or sum(sum(rgb[:3])/3 for rgb in pixels)/len(pixels)>128
+        background=Image.new('RGBA',image.size,'black' if light else 'white')
+        background.alpha_composite(image)
+        background.convert('RGB').save(folder/(job['id']+'-preview.png'))
     (folder/'入力内容.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
     return folder
 
@@ -67,10 +76,11 @@ def export_files(folder, job, destination):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title('名入れ工房 | 商店風トートバッグ')
+        self.title('名入れ工房 | 商店風 商品カタログ')
         self.geometry('1120x820'); self.minsize(940,730)
         self.configure(bg='#f3f1ec')
         self.events=queue.Queue();self.busy=False;self.result=None;self.image=None
+        self.products=load_catalog();self.selected_product=None;self.selected_variant=None
         style=ttk.Style(self); style.theme_use('clam')
         style.configure('TFrame',background='#f3f1ec')
         style.configure('TLabel',background='#f3f1ec',font=('Yu Gothic UI',11))
@@ -79,22 +89,37 @@ class App(tk.Tk):
         style.configure('Accent.TButton',background='#1b5c52',foreground='white')
         top=ttk.Frame(self,padding=(26,20));top.pack(fill='x')
         ttk.Label(top,text='名入れ工房',style='Title.TLabel').pack(anchor='w')
-        ttk.Label(top,text='商店風トートバッグ M   /   商品番号 9').pack(anchor='w',pady=(5,0))
+        self.product_label=ttk.Label(top,text='① カタログから作る商品を選んでください');self.product_label.pack(anchor='w',pady=(5,0))
+        self.catalog_button=ttk.Button(top,text='商品カタログから選ぶ',command=self.open_catalog);self.catalog_button.pack(anchor='w',pady=(8,0))
+        self.variant_name=tk.StringVar()
+        self.variant_picker=ttk.Combobox(top,textvariable=self.variant_name,state='readonly',width=60)
+        self.variant_picker.pack(anchor='w',pady=(8,0));self.variant_picker.bind('<<ComboboxSelected>>',self.choose_variant)
         body=ttk.Frame(self,padding=(26,0,26,12));body.pack(fill='both',expand=True)
-        left=ttk.Frame(body,width=330);left.pack(side='left',fill='y',padx=(0,24));left.pack_propagate(False)
+        left_outer=ttk.Frame(body,width=350);left_outer.pack(side='left',fill='y',padx=(0,20));left_outer.pack_propagate(False)
+        left_canvas=tk.Canvas(left_outer,width=330,highlightthickness=0,bg='#f3f1ec')
+        left_scroll=ttk.Scrollbar(left_outer,orient='vertical',command=left_canvas.yview);left_scroll.pack(side='right',fill='y')
+        left_canvas.pack(side='left',fill='both',expand=True);left_canvas.configure(yscrollcommand=left_scroll.set)
+        left=ttk.Frame(left_canvas);left_item=left_canvas.create_window((0,0),window=left,anchor='nw')
+        left.bind('<Configure>',lambda e:left_canvas.configure(scrollregion=left_canvas.bbox('all')))
+        left_canvas.bind('<Configure>',lambda e:left_canvas.itemconfigure(left_item,width=e.width))
         self.fields={}
         for key,label,default,helper in [
             ('mark','丸の中','俺流','1文字、または縦2段の2文字'),
             ('year','上段','創業平成二十二年','10文字まで'),
             ('shop','下段','俺流総本家','7文字まで'),
             ('id','保存名・注文番号','sample','同じ名前のファイルは上書きしません'),
-            ('width','デザインの幅（mm）','','空欄：元データの大きさ。番号も含む全体の幅')]:
+            ('width','幅を変更する場合のみ（mm）','','空欄：選択商品の元寸法。全商品を同じ大きさにはしません')]:
             ttk.Label(left,text=label).pack(anchor='w',pady=(9,3))
             value=tk.StringVar(value=default);self.fields[key]=value
             entry=ttk.Entry(left,textvariable=value,font=('Yu Gothic UI',13));entry.pack(fill='x',ipady=4)
             count=ttk.Label(left,text=helper,font=('Yu Gothic UI',9),wraplength=310);count.pack(anchor='w',pady=(3,0))
             value.trace_add('write',lambda *args:self.changed())
-        ttk.Label(left,text='長い文字は文字間を詰め、横幅を縮めます。\n商品番号9は印刷データにも残します。',wraplength=310).pack(anchor='w',pady=14)
+        self.collar_value=tk.StringVar();self.collar_frame=ttk.Frame(left)
+        ttk.Label(self.collar_frame,text='襟の文字（ハッピ用・20文字まで）').pack(anchor='w')
+        self.collar_entry=ttk.Entry(self.collar_frame,textvariable=self.collar_value,font=('Yu Gothic UI',13));self.collar_entry.pack(fill='x',ipady=4)
+        ttk.Label(self.collar_frame,text='空欄なら下段の店名を両襟へ入れます。',font=('Yu Gothic UI',9)).pack(anchor='w',pady=3)
+        self.collar_value.trace_add('write',lambda *args:self.changed())
+        ttk.Label(left,text='長い文字は文字間を詰め、横幅を縮めます。\n選択商品の識別番号を印刷データに残します。',wraplength=310).pack(anchor='w',pady=14)
         self.preview_button=ttk.Button(left,text='① 見本を作成',style='Accent.TButton',command=self.preview);self.preview_button.pack(fill='x')
         self.save_button=ttk.Button(left,text='② AI・PDF・PNGを出力',command=self.save,state='disabled');self.save_button.pack(fill='x',pady=8)
         ttk.Button(left,text='出力フォルダーを開く',command=self.open_output).pack(fill='x')
@@ -109,12 +134,73 @@ class App(tk.Tk):
         self.protocol('WM_DELETE_WINDOW',self.close)
         self.after(150,self.poll)
         self.after(50,self.show_on_start)
+        if '--smoke-test' not in sys.argv:
+            launch_product,launch_variant=parse_launch(sys.argv[1:])
+            if launch_product:
+                self.select_product(launch_product)
+                if launch_variant:
+                    self.variant_picker.current(next(i for i,v in enumerate(launch_product['variants']) if v['id']==launch_variant['id']));self.choose_variant()
+            else:self.after(300,self.open_catalog)
+
+    def open_catalog(self):
+        if self.busy:return
+        if hasattr(self,'catalog_window') and self.catalog_window.winfo_exists():self.catalog_window.lift();return
+        window=tk.Toplevel(self);self.catalog_window=window;window.title('商店風 商品カタログ');window.geometry('1060x760')
+        heading=ttk.Frame(window,padding=16);heading.pack(fill='x')
+        ttk.Label(heading,text='作る商品を選択',style='Title.TLabel').pack(anchor='w')
+        ttk.Label(heading,text='楽天の商品画像と商品番号で選びます。選択後にサイズ・版を指定してください。').pack(anchor='w')
+        search=tk.StringVar();ttk.Entry(heading,textvariable=search,width=50).pack(anchor='w',pady=(8,0))
+        canvas=tk.Canvas(window,highlightthickness=0,bg='#f3f1ec');scroll=ttk.Scrollbar(window,orient='vertical',command=canvas.yview)
+        scroll.pack(side='right',fill='y');canvas.pack(fill='both',expand=True);canvas.configure(yscrollcommand=scroll.set)
+        cards=ttk.Frame(canvas);container=canvas.create_window((0,0),window=cards,anchor='nw')
+        cards.bind('<Configure>',lambda e:canvas.configure(scrollregion=canvas.bbox('all')))
+        canvas.bind('<Configure>',lambda e:canvas.itemconfigure(container,width=e.width))
+        window.bind('<MouseWheel>',lambda e:canvas.yview_scroll(-int(e.delta/120),'units'))
+        self.catalog_photos=[]
+        def render(*args):
+            for child in cards.winfo_children():child.destroy()
+            self.catalog_photos.clear();shown=0
+            for product in self.products:
+                if search.get().strip().lower() not in (product['name']+' '+product['id']).lower():continue
+                card=ttk.Frame(cards,padding=10);card.grid(row=shown//4,column=shown%4,sticky='nsew',padx=5,pady=5);shown+=1
+                picture_path=image_path(product)
+                if picture_path.exists():
+                    image=Image.open(picture_path).convert('RGB');image.thumbnail((215,170));photo=ImageTk.PhotoImage(image);self.catalog_photos.append(photo)
+                    button=ttk.Button(card,image=photo,command=lambda p=product:self.select_product(p));button.pack()
+                ttk.Label(card,text=product['name'],wraplength=215,font=('Yu Gothic UI',11,'bold')).pack(anchor='w',pady=(5,0))
+                ttk.Label(card,text=product['id'],font=('Yu Gothic UI',9)).pack(anchor='w')
+                ttk.Button(card,text='この商品を作る',command=lambda p=product:self.select_product(p)).pack(fill='x',pady=5)
+                ttk.Button(card,text='楽天で確認',command=lambda p=product:webbrowser.open(p['rakutenUrl'])).pack(fill='x')
+            for col in range(4):cards.columnconfigure(col,weight=1)
+        search.trace_add('write',render);render();window.transient(self);window.lift()
+
+    def select_product(self,product):
+        self.selected_product=product;variants=product['variants']
+        self.variant_picker['values']=[self.variant_title(v) for v in variants]
+        self.fields['width'].set('');self.selected_variant=None
+        self.collar_value.set('');self.collar_frame.pack_forget()
+        if product.get('collarFrames'):self.collar_frame.pack(fill='x',before=self.preview_button,pady=8)
+        self.product_label.configure(text=product['name']+'  / '+product['id'])
+        if len(variants)==1:self.variant_picker.current(0);self.choose_variant()
+        else:self.variant_picker.set('サイズ・版を選択してください');self.changed()
+        if hasattr(self,'catalog_window') and self.catalog_window.winfo_exists():self.catalog_window.destroy()
+
+    def variant_title(self,variant):
+        return f"{variant['name']}  / 柄の配置枠 {variant['designWidthMm']:g} × {variant['designHeightMm']:g} mm"
+
+    def choose_variant(self,event=None):
+        if not self.selected_product:return
+        index=self.variant_picker.current()
+        if index<0:self.selected_variant=None;return
+        self.selected_variant=self.selected_product['variants'][index]
+        self.product_label.configure(text=self.selected_product['name']+'  / '+self.selected_product['id'])
+        self.changed()
 
     def show_on_start(self):
         self.update_idletasks()
         screen_width,screen_height=self.winfo_screenwidth(),self.winfo_screenheight()
         width=min(1120,max(640,screen_width-60))
-        height=min(820,max(500,screen_height-100))
+        height=min(960,max(500,screen_height-100))
         self.minsize(min(940,width),min(730,height))
         self.geometry(f'{width}x{height}+{max(0,(screen_width-width)//2)}+{max(0,(screen_height-height)//2)}')
         self.deiconify()
@@ -130,9 +216,17 @@ class App(tk.Tk):
 
     def preview(self):
         if self.busy:return
-        try: job=validate(*(self.fields[k].get().strip() for k in ('mark','year','shop','id','width')))
+        try:
+            if not self.selected_product or not self.selected_variant:raise ValueError('カタログから商品を選んでください。')
+            job=attach_product(validate(*(self.fields[k].get().strip() for k in ('mark','year','shop','id','width'))),self.selected_product,self.selected_variant)
+            if job.get('collarFrames'):
+                collar=self.collar_value.get().strip() or job['shop']
+                if len(collar)>20 or any(c in collar for c in '\r\n') or any(ord(c)>0xffff for c in collar):raise ValueError('襟の文字は20文字以内の1行で入力してください。')
+                job['collarText']=collar
         except ValueError as e: messagebox.showerror('入力を確認してください',str(e));return
         self.busy=True;self.preview_button.configure(state='disabled');self.save_button.configure(state='disabled')
+        self.catalog_button.configure(state='disabled');self.variant_picker.configure(state='disabled')
+        self.collar_entry.configure(state='disabled')
         self.status.set('Illustratorで見本を作成しています…')
         def work():
             try:self.events.put(('ok',job,generate(job)))
@@ -143,6 +237,8 @@ class App(tk.Tk):
         try:
             event=self.events.get_nowait()
             self.busy=False;self.preview_button.configure(state='normal')
+            self.catalog_button.configure(state='normal');self.variant_picker.configure(state='readonly')
+            self.collar_entry.configure(state='normal')
             if event[0]=='error':
                 self.status.set('作成に失敗しました。');messagebox.showerror('作成エラー',event[1])
             else:

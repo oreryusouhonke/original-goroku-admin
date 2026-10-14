@@ -1,0 +1,4873 @@
+{
+  "schemaVersion": 1,
+  "sourceCategory": "https://item.rakuten.co.jp/auc-taiyou-sya/c/0000001472/",
+  "products": [
+    {
+      "id": "bt-005",
+      "name": "商店風 バスタオル",
+      "template": "templates/template-00.ai",
+      "templateOriginalName": "bt-005 商店風バスタオル.ai",
+      "templateSha256": "b94853386fb3896881f257213887d150ec876d414c3190b109fac4452b0e82fb",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/bt-005/",
+      "image": "catalog-images/bt-005.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/design-green/08767531/bt-005.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "ブラック",
+          "scale": 1,
+          "designWidthMm": 430.03,
+          "designHeightMm": 520.22,
+          "layouts": {
+            "1": [
+              {
+                "central": 24,
+                "year": 25,
+                "shop": 26,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  -2877.04869499197,
+                  4300.16168659023,
+                  -1658.05751388961,
+                  2825.51510384624
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 80,
+                "year": 81,
+                "shop": 82,
+                "ring": 14,
+                "marker": null,
+                "bounds": [
+                  -5212.82404219616,
+                  4301.09841120746,
+                  -3993.83284721838,
+                  2826.45185047079
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "ネイビー",
+          "scale": 1,
+          "designWidthMm": 430.03,
+          "designHeightMm": 520.22,
+          "layouts": {
+            "1": [
+              {
+                "central": 38,
+                "year": 39,
+                "shop": 40,
+                "ring": 8,
+                "marker": null,
+                "bounds": [
+                  -2877.04869499197,
+                  -359.803558314476,
+                  -1658.05751388961,
+                  -1834.45014105847
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 52,
+                "year": 53,
+                "shop": 54,
+                "ring": 10,
+                "marker": null,
+                "bounds": [
+                  -5212.82404219616,
+                  -358.866833697248,
+                  -3993.83284721838,
+                  -1833.51339443392
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "ボルドー",
+          "scale": 1,
+          "designWidthMm": 430.03,
+          "designHeightMm": 520.22,
+          "layouts": {
+            "1": [
+              {
+                "central": 31,
+                "year": 32,
+                "shop": 33,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  -2877.04869499197,
+                  -5125.44566357763,
+                  -1658.05751388961,
+                  -6600.09224632163
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 45,
+                "year": 46,
+                "shop": 47,
+                "ring": 9,
+                "marker": null,
+                "bounds": [
+                  -5212.82404219616,
+                  -5124.50893896041,
+                  -3993.83284721838,
+                  -6599.15549969707
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "グレー",
+          "scale": 1,
+          "designWidthMm": 430.03,
+          "designHeightMm": 520.22,
+          "layouts": {
+            "1": [
+              {
+                "central": 17,
+                "year": 18,
+                "shop": 19,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4969.8463487355,
+                  4300.16168659023,
+                  6188.83752983786,
+                  2825.51510384624
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 73,
+                "year": 74,
+                "shop": 75,
+                "ring": 13,
+                "marker": null,
+                "bounds": [
+                  2559.21464588433,
+                  4301.09841120746,
+                  3778.2058408621,
+                  2826.45185047079
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "カーキ",
+          "scale": 1,
+          "designWidthMm": 430.03,
+          "designHeightMm": 520.22,
+          "layouts": {
+            "1": [
+              {
+                "central": 10,
+                "year": 11,
+                "shop": 12,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  4969.8463487355,
+                  -359.803558314474,
+                  6188.83752983786,
+                  -1834.45014105847
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 66,
+                "year": 67,
+                "shop": 68,
+                "ring": 12,
+                "marker": null,
+                "bounds": [
+                  2559.21464588433,
+                  -358.866833697248,
+                  3778.2058408621,
+                  -1833.51339443391
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v5",
+          "name": "マスタード",
+          "scale": 1,
+          "designWidthMm": 430.03,
+          "designHeightMm": 520.22,
+          "layouts": {
+            "1": [
+              {
+                "central": 3,
+                "year": 4,
+                "shop": 5,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  4969.8463487355,
+                  -5125.44566357763,
+                  6188.83752983786,
+                  -6600.09224632163
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 59,
+                "year": 60,
+                "shop": 61,
+                "ring": 11,
+                "marker": null,
+                "bounds": [
+                  2559.21464588433,
+                  -5124.50893896041,
+                  3778.2058408621,
+                  -6599.15549969707
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "bt-005"
+    },
+    {
+      "id": "cut-202304-ng-01",
+      "name": "商店風 キッズTシャツ",
+      "template": "templates/template-01.ai",
+      "templateOriginalName": "cut-202304-ng-01 商店風キッズTシャツ.ai",
+      "templateSha256": "e3fcd0e6a8349aaa7f38a272d8ec77304a53cf97b95f3bceefd83b0e3a102220",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/cut-202304-ng-01/",
+      "image": "catalog-images/cut-202304-ng-01.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/cut-202304-ng-01.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "120～140",
+          "scale": 1,
+          "designWidthMm": 202.0,
+          "designHeightMm": 244.36,
+          "layouts": {
+            "1": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3261.845,
+                  -2209.3496,
+                  3834.4434,
+                  -2902.0374
+                ]
+              },
+              {
+                "central": 8,
+                "year": null,
+                "shop": null,
+                "ring": 2,
+                "marker": null,
+                "bounds": [
+                  3457.526,
+                  -2026.7675,
+                  3638.7622,
+                  -2208.0038
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 0,
+                "year": 1,
+                "shop": 2,
+                "ring": 0,
+                "marker": null,
+                "bounds": [
+                  2467.892,
+                  -2209.6217,
+                  3040.4904,
+                  -2902.3094
+                ]
+              },
+              {
+                "central": 7,
+                "year": null,
+                "shop": null,
+                "ring": 1,
+                "marker": null,
+                "bounds": [
+                  2663.5728,
+                  -2027.0396,
+                  2844.809,
+                  -2208.2759
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "150以上",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 25,
+                "year": 26,
+                "shop": 27,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  5468.0087,
+                  -2259.1616,
+                  6184.4719,
+                  -3125.8865
+                ]
+              },
+              {
+                "central": 24,
+                "year": null,
+                "shop": null,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  5712.8543,
+                  -2030.7059,
+                  5939.6259,
+                  -2257.4776
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 16,
+                "year": 17,
+                "shop": 18,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  4490.3283,
+                  -2259.1615,
+                  5206.7915,
+                  -3125.8864
+                ]
+              },
+              {
+                "central": 23,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4735.1737,
+                  -2030.7059,
+                  4961.9454,
+                  -2257.4776
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "cut-202304-ng-01"
+    },
+    {
+      "id": "cut-202306-ng-02",
+      "name": "商店風 ラグランTシャツ",
+      "template": "templates/template-02.ai",
+      "templateOriginalName": "cut-202306-ng-02 商店風ラグランTシャツ.ai",
+      "templateSha256": "80af38522c9ec13aa0b46ce9ad7b8cdbfb5863140e1610fba7925fab728bd437",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/cut-202306-ng-02/",
+      "image": "catalog-images/cut-202306-ng-02.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/cut-202306-ng-02.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 11,
+                "year": 12,
+                "shop": 13,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 10,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 9,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "cut-202306-ng-02"
+    },
+    {
+      "id": "cut-202402ng01",
+      "name": "商店風 新トートバッグ（SML）",
+      "template": "templates/template-03.ai",
+      "templateOriginalName": "cut-202402-ng-01 商店風新トートバッグ（SML）.ai",
+      "templateSha256": "73dbe99325a1148c6bac206e7ff50280b21f8da981d9d62220cf36a78efdd32b",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/cut-202402ng01/",
+      "image": "catalog-images/cut-202402ng01.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/cut-202402ng01.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "S / 黒文字",
+          "scale": 1,
+          "designWidthMm": 123.99,
+          "designHeightMm": 150.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 0,
+                "year": 1,
+                "shop": 2,
+                "ring": 2,
+                "marker": null,
+                "bounds": [
+                  -1556.9376,
+                  -3687.612,
+                  -1205.456,
+                  -4112.8089
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 7,
+                "year": 8,
+                "shop": 9,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  -1098.3285,
+                  -3689.6121,
+                  -747.4401,
+                  -4114.8089
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "S / 白文字",
+          "scale": 1,
+          "designWidthMm": 123.99,
+          "designHeightMm": 150.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 14,
+                "year": 15,
+                "shop": 16,
+                "ring": 8,
+                "marker": null,
+                "bounds": [
+                  -1568.6009,
+                  -1171.0606,
+                  -1217.1193,
+                  -1596.2575
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 21,
+                "year": 22,
+                "shop": 23,
+                "ring": 11,
+                "marker": null,
+                "bounds": [
+                  -1109.9918,
+                  -1173.0607,
+                  -759.1034,
+                  -1598.2575
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "M / 黒文字",
+          "scale": 1,
+          "designWidthMm": 169.46,
+          "designHeightMm": 205.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 28,
+                "year": 29,
+                "shop": 30,
+                "ring": 14,
+                "marker": null,
+                "bounds": [
+                  -229.9974,
+                  -3652.0619,
+                  250.360793675354,
+                  -4233.1643
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 35,
+                "year": 36,
+                "shop": 37,
+                "ring": 17,
+                "marker": null,
+                "bounds": [
+                  437.731488941972,
+                  -3652.0619,
+                  917.278876827586,
+                  -4233.1643
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "M / 白文字",
+          "scale": 1,
+          "designWidthMm": 169.46,
+          "designHeightMm": 205.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 42,
+                "year": 43,
+                "shop": 44,
+                "ring": 20,
+                "marker": null,
+                "bounds": [
+                  -241.6607,
+                  -1135.5105,
+                  238.697493969994,
+                  -1716.6129
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 49,
+                "year": 50,
+                "shop": 51,
+                "ring": 23,
+                "marker": null,
+                "bounds": [
+                  426.068189236612,
+                  -1135.5105,
+                  905.615577122226,
+                  -1716.6129
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "L / 黒文字",
+          "scale": 1,
+          "designWidthMm": 173.59,
+          "designHeightMm": 210.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 56,
+                "year": 57,
+                "shop": 58,
+                "ring": 26,
+                "marker": null,
+                "bounds": [
+                  1387.3621,
+                  -3665.9117,
+                  1879.4363,
+                  -4261.1873
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 63,
+                "year": 64,
+                "shop": 65,
+                "ring": 29,
+                "marker": null,
+                "bounds": [
+                  2055.1009,
+                  -3665.9117,
+                  2546.3445,
+                  -4261.1873
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v5",
+          "name": "L / 白文字",
+          "scale": 1,
+          "designWidthMm": 173.59,
+          "designHeightMm": 210.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 70,
+                "year": 71,
+                "shop": 72,
+                "ring": 32,
+                "marker": null,
+                "bounds": [
+                  1375.6988,
+                  -1149.3603,
+                  1867.773,
+                  -1744.6359
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 77,
+                "year": 78,
+                "shop": 79,
+                "ring": 35,
+                "marker": null,
+                "bounds": [
+                  2043.4376,
+                  -1149.3603,
+                  2534.6812,
+                  -1744.6359
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "cut-202402ng01"
+    },
+    {
+      "id": "dtf-202307-ng-01",
+      "name": "商店風 ナイロンサコッシュ",
+      "template": "templates/template-04.ai",
+      "templateOriginalName": "dtf-202307-ng-01 商店風ナイロンサコッシュ.ai",
+      "templateSha256": "05c3de7c431b441e99346bb2c11f097482622c375b5386e9a4941a858c2288d0",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/dtf-202307-ng-01/",
+      "image": "catalog-images/dtf-202307-ng-01.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/dtf-202307-ng-01.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準 / 白文字",
+          "scale": 1,
+          "designWidthMm": 94.01,
+          "designHeightMm": 113.73,
+          "layouts": {
+            "1": [
+              {
+                "central": 7,
+                "year": 8,
+                "shop": 9,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  1378.88075200584,
+                  -427.695237664475,
+                  1645.37429531293,
+                  -750.079680680503
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 0,
+                "year": 1,
+                "shop": 2,
+                "ring": 1,
+                "marker": null,
+                "bounds": [
+                  1675.56156080523,
+                  -427.695237664475,
+                  1942.05510411231,
+                  -750.079680680501
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "標準 / 黒文字",
+          "scale": 1,
+          "designWidthMm": 94.01,
+          "designHeightMm": 113.73,
+          "layouts": {
+            "1": [
+              {
+                "central": 21,
+                "year": 22,
+                "shop": 23,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  717.035276151313,
+                  -427.695237664475,
+                  983.528819458399,
+                  -750.079680680503
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 14,
+                "year": 15,
+                "shop": 16,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  1018.14286036184,
+                  -427.695237664475,
+                  1284.63640366893,
+                  -750.079680680503
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "dtf-202307-ng-01"
+    },
+    {
+      "id": "dtf-202312-kt-01",
+      "name": "商店風 ベースボールシャツ",
+      "template": "templates/template-05.ai",
+      "templateOriginalName": "dtf-202312-kt-01 商店風ベースボールシャツ.ai",
+      "templateSha256": "7b4caff0dcb1da7bf2e2b525cfb8e9206647725dfc1ab511d2835a72c7e28126",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/dtf-202312-kt-01/",
+      "image": "catalog-images/dtf-202312-kt-01.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/dtf-202312-kt-01.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "白文字",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 1,
+                "year": 2,
+                "shop": 3,
+                "ring": 2,
+                "marker": null,
+                "bounds": [
+                  -413.6704,
+                  -1983.1274,
+                  302.79279235081,
+                  -2849.8523
+                ]
+              },
+              {
+                "central": 0,
+                "year": null,
+                "shop": null,
+                "ring": 1,
+                "marker": null,
+                "bounds": [
+                  -168.8248,
+                  -1754.6717,
+                  57.9467999999997,
+                  -1981.4434
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 8,
+                "year": 9,
+                "shop": 10,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  -1391.3508,
+                  -1983.1273,
+                  -674.8876,
+                  -2849.8522
+                ]
+              },
+              {
+                "central": 15,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  -1146.5054,
+                  -1754.6717,
+                  -919.7337,
+                  -1981.4434
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "黒文字",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 17,
+                "year": 18,
+                "shop": 19,
+                "ring": 8,
+                "marker": null,
+                "bounds": [
+                  1479.9463,
+                  -1959.2429,
+                  2196.4095,
+                  -2825.9678
+                ]
+              },
+              {
+                "central": 16,
+                "year": null,
+                "shop": null,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  1724.7919,
+                  -1730.7872,
+                  1951.5635,
+                  -1957.5589
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 24,
+                "year": 25,
+                "shop": 26,
+                "ring": 10,
+                "marker": null,
+                "bounds": [
+                  502.265887311696,
+                  -1959.2428,
+                  1218.7291,
+                  -2825.9677
+                ]
+              },
+              {
+                "central": 31,
+                "year": null,
+                "shop": null,
+                "ring": 11,
+                "marker": null,
+                "bounds": [
+                  747.111281126381,
+                  -1730.7872,
+                  973.883,
+                  -1957.5589
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "dtf-202312-kt-01"
+    },
+    {
+      "id": "hk-003",
+      "name": "商店風 ブランケット",
+      "template": "templates/template-06.ai",
+      "templateOriginalName": "hk-003  商店風ブランケット.ai",
+      "templateSha256": "6287eef46968b751eb216000c931bdb7bad0c4327b560705bbad93d62e0b041c",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/hk-003/",
+      "image": "catalog-images/hk-003.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/design-green/08767531/hk-003.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "ブラック",
+          "scale": 1,
+          "designWidthMm": 520.0,
+          "designHeightMm": 629.06,
+          "layouts": {
+            "1": [
+              {
+                "central": 38,
+                "year": 39,
+                "shop": 40,
+                "ring": 8,
+                "marker": null,
+                "bounds": [
+                  -1845.32847155446,
+                  3319.79101233675,
+                  -371.312723522961,
+                  1536.63431732294
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 45,
+                "year": 46,
+                "shop": 47,
+                "ring": 9,
+                "marker": null,
+                "bounds": [
+                  -4796.90283785123,
+                  3319.79101233675,
+                  -3322.88708981973,
+                  1536.63431732294
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "ネイビー",
+          "scale": 1,
+          "designWidthMm": 520.0,
+          "designHeightMm": 629.06,
+          "layouts": {
+            "1": [
+              {
+                "central": 24,
+                "year": 25,
+                "shop": 26,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  -1845.32847155446,
+                  -676.993629809183,
+                  -371.312723522961,
+                  -2460.15032482301
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 59,
+                "year": 60,
+                "shop": 61,
+                "ring": 11,
+                "marker": null,
+                "bounds": [
+                  -4796.90283785123,
+                  -676.993629809183,
+                  -3322.88708981973,
+                  -2460.15032482301
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "ボルドー",
+          "scale": 1,
+          "designWidthMm": 520.0,
+          "designHeightMm": 629.06,
+          "layouts": {
+            "1": [
+              {
+                "central": 10,
+                "year": 11,
+                "shop": 12,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  -1845.32847155446,
+                  -4827.48304161527,
+                  -371.312723522961,
+                  -6610.63973662908
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 73,
+                "year": 74,
+                "shop": 75,
+                "ring": 13,
+                "marker": null,
+                "bounds": [
+                  -4796.90283785123,
+                  -4827.48304161527,
+                  -3322.88708981973,
+                  -6610.63973662908
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "グレー",
+          "scale": 1,
+          "designWidthMm": 520.0,
+          "designHeightMm": 629.06,
+          "layouts": {
+            "1": [
+              {
+                "central": 31,
+                "year": 32,
+                "shop": 33,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  7081.8825942711,
+                  3313.72777991488,
+                  8555.8983423026,
+                  1530.57108490106
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 52,
+                "year": 53,
+                "shop": 54,
+                "ring": 10,
+                "marker": null,
+                "bounds": [
+                  4129.30423015224,
+                  3313.72777991488,
+                  5603.31997818373,
+                  1530.57108490106
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "カーキ",
+          "scale": 1,
+          "designWidthMm": 520.0,
+          "designHeightMm": 629.06,
+          "layouts": {
+            "1": [
+              {
+                "central": 17,
+                "year": 18,
+                "shop": 19,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  7081.8825942711,
+                  -683.056862231058,
+                  8555.8983423026,
+                  -2466.21355724488
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 66,
+                "year": 67,
+                "shop": 68,
+                "ring": 12,
+                "marker": null,
+                "bounds": [
+                  4129.30423015224,
+                  -683.056862231058,
+                  5603.31997818373,
+                  -2466.21355724488
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v5",
+          "name": "マスタード",
+          "scale": 1,
+          "designWidthMm": 520.0,
+          "designHeightMm": 629.06,
+          "layouts": {
+            "1": [
+              {
+                "central": 3,
+                "year": 4,
+                "shop": 5,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  7081.8825942711,
+                  -4833.54627403714,
+                  8555.8983423026,
+                  -6616.70296905096
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 80,
+                "year": 81,
+                "shop": 82,
+                "ring": 14,
+                "marker": null,
+                "bounds": [
+                  4129.30423015224,
+                  -4833.54627403714,
+                  5603.31997818373,
+                  -6616.70296905096
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "hk-003"
+    },
+    {
+      "id": "ht-004",
+      "name": "商店風 ハンドタオル",
+      "template": "templates/template-07.ai",
+      "templateOriginalName": "ht-004  商店風ハンドタオル.ai",
+      "templateSha256": "9c9f194e915214f990f8f420c391abbfffaf1e358fec2a5e46abb74c37c5f403",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/ht-004/",
+      "image": "catalog-images/ht-004.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/design-green/08767531/ht-004.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 132.34,
+          "designHeightMm": 160.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 3,
+                "year": 4,
+                "shop": 5,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  124.246917353795,
+                  -85.0393464566923,
+                  499.373294813615,
+                  -538.582653543306
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 10,
+                "year": 4,
+                "shop": 5,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  124.246917353795,
+                  -85.0393464566923,
+                  499.373294813615,
+                  -538.582653543306
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "ht-004"
+    },
+    {
+      "id": "naire-0001",
+      "name": "商店風 Tシャツ",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0001/",
+      "image": "catalog-images/naire-0001.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/design-green/08767531/naire-0001.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "1"
+    },
+    {
+      "id": "naire-0003",
+      "name": "商店風 スウェット",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0003/",
+      "image": "catalog-images/naire-0003.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/imgrc0112518504.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "3"
+    },
+    {
+      "id": "naire-0004",
+      "name": "商店風 ジップアップパーカー",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0004/",
+      "image": "catalog-images/naire-0004.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/001/naire-0004.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "4"
+    },
+    {
+      "id": "naire-0007",
+      "name": "商店風 ロンT",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0007/",
+      "image": "catalog-images/naire-0007.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/simulator/top-1/naire-0007.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "7"
+    },
+    {
+      "id": "naire-0023",
+      "name": "商店風 プルオーバーパーカー",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0023/",
+      "image": "catalog-images/naire-0023.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/09154938/naire-0023x-top-1.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "23"
+    },
+    {
+      "id": "naire-0024",
+      "name": "商店風 スタジャン",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0024/",
+      "image": "catalog-images/naire-0024.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0024.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "24"
+    },
+    {
+      "id": "naire-0025",
+      "name": "商店風 スタンドジャケット",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0025/",
+      "image": "catalog-images/naire-0025.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0025.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "25"
+    },
+    {
+      "id": "naire-0031",
+      "name": "商店風 スウィングトップ",
+      "template": "templates/template-08.ai",
+      "templateOriginalName": "naire-0001.0003.0004.0007.0023.0024.0025.0031商店風Tシャツ.ポロシャツ.パーカー.スウェット.ロンT.ジャケット系.ai",
+      "templateSha256": "a4256bb8cf7bfbff3683d2f69777743164ecb63e86bb2acd0087b36884678085",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0031/",
+      "image": "catalog-images/naire-0031.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0031.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "90～110cm",
+          "scale": 0.63,
+          "designWidthMm": 159.23,
+          "designHeightMm": 192.63,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "120～150cm",
+          "scale": 0.8,
+          "designWidthMm": 202.2,
+          "designHeightMm": 244.61,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "160cm～L / 等倍",
+          "scale": 1,
+          "designWidthMm": 252.75,
+          "designHeightMm": 305.76,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "XL～XXL",
+          "scale": 1.1,
+          "designWidthMm": 278.03,
+          "designHeightMm": 336.34,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v4",
+          "name": "XXXL",
+          "scale": 1.3,
+          "designWidthMm": 328.58,
+          "designHeightMm": 397.49,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  4492.0024,
+                  -1866.5721,
+                  5208.4656,
+                  -2733.297
+                ]
+              },
+              {
+                "central": 12,
+                "year": null,
+                "shop": null,
+                "ring": 5,
+                "marker": null,
+                "bounds": [
+                  4736.848,
+                  -1638.1164,
+                  4963.6196,
+                  -1864.8881
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  3514.322,
+                  -1866.572,
+                  4230.7852,
+                  -2733.2969
+                ]
+              },
+              {
+                "central": 11,
+                "year": null,
+                "shop": null,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  3759.1674,
+                  -1638.1164,
+                  3985.9391,
+                  -1864.8881
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "31"
+    },
+    {
+      "id": "naire-0008",
+      "name": "商店風 前掛け",
+      "template": "templates/template-09.ai",
+      "templateOriginalName": "naire-0008 商店風前掛け.ai",
+      "templateSha256": "018887c376f825de26aba7ca73c7b1c82b7d18fbb840dfa557e299d5eaedfa2b",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0008/",
+      "image": "catalog-images/naire-0008.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/001/naire-0008.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 298.0,
+          "designHeightMm": 360.5,
+          "layouts": {
+            "1": [
+              {
+                "central": 27,
+                "year": 28,
+                "shop": 29,
+                "ring": 9,
+                "marker": null,
+                "bounds": [
+                  1023.7046,
+                  176.106095551186,
+                  1868.429,
+                  -845.7799
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 34,
+                "year": 35,
+                "shop": 36,
+                "ring": 10,
+                "marker": null,
+                "bounds": [
+                  -123.3071,
+                  174.3914955945,
+                  718.582681847074,
+                  -844.0653
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "8"
+    },
+    {
+      "id": "naire-0009",
+      "name": "商店風 トートバッグ（M）",
+      "template": "templates/template-10.ai",
+      "templateOriginalName": "naire-0009 商店風トートバッグ（M）.ai",
+      "templateSha256": "0f4e77b0e47c82143902d47f9b201704df2658faa50a00c0e58a526b5456176a",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0009/",
+      "image": "catalog-images/naire-0009.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0009.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "M",
+          "scale": 1,
+          "designWidthMm": 169.46,
+          "designHeightMm": 205.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 5,
+                "year": 6,
+                "shop": 7,
+                "ring": 3,
+                "marker": 4,
+                "bounds": [
+                  949.749876007299,
+                  -66.8788000000004,
+                  1430.1081,
+                  -647.9812
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 12,
+                "year": 13,
+                "shop": 14,
+                "ring": 4,
+                "marker": 3,
+                "bounds": [
+                  1617.4788,
+                  -66.8788000000004,
+                  2097.0262,
+                  -647.9812
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "9"
+    },
+    {
+      "id": "naire-0011",
+      "name": "商店風 巾着バッグ",
+      "template": "templates/template-11.ai",
+      "templateOriginalName": "naire-0011 商店風巾着バッグ.ai",
+      "templateSha256": "ee3792039ee5d0ddf5e36355e16e0449dbf6664714c82f9c41e8836543b3d38f",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0011/",
+      "image": "catalog-images/naire-0011.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0011x.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 150.0,
+          "designHeightMm": 181.46,
+          "layouts": {
+            "1": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  708.029182113678,
+                  -27.1588000000002,
+                  1133.226,
+                  -541.531199999999
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  1259.8626,
+                  -25.3608000000004,
+                  1685.0594,
+                  -539.7327
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "11"
+    },
+    {
+      "id": "naire-0012",
+      "name": "商店風 デニムマルシェバッグ",
+      "template": "templates/template-12.ai",
+      "templateOriginalName": "naire-0012 商店風デニムマルシェバッグ.ai",
+      "templateSha256": "1ab240dbddedc41c52058ab00a3a0deed1d803910f27be9b0d071d8ee95f25f3",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0012/",
+      "image": "catalog-images/naire-0012.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0012.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 200.0,
+          "designHeightMm": 241.95,
+          "layouts": {
+            "1": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  907.492777074804,
+                  51.6211999999996,
+                  1474.4219,
+                  -634.2083
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  1652.1616,
+                  51.4265999999998,
+                  2219.0907,
+                  -634.0137
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "12"
+    },
+    {
+      "id": "naire-0013",
+      "name": "商店風 レジバッグ",
+      "template": "templates/template-13.ai",
+      "templateOriginalName": "naire-0013 商店風レジバッグ.ai",
+      "templateSha256": "be90c4c50b247073b78321293bfc14fa2cf8e0b4eb6b58ac7a3b5ce5dfb18817",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0013/",
+      "image": "catalog-images/naire-0013.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0013.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 166.92,
+          "designHeightMm": 201.92,
+          "layouts": {
+            "1": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  806.86557961686,
+                  -36.3428000000004,
+                  1280.0133,
+                  -608.722400000001
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  1406.0917,
+                  -40.4682000000003,
+                  1879.239,
+                  -612.522300000001
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "13"
+    },
+    {
+      "id": "naire-0014",
+      "name": "商店風 スクエアトートバッグ（M）",
+      "template": "templates/template-14.ai",
+      "templateOriginalName": "naire-0014 商店風スクエアトートバッグ（M）.ai",
+      "templateSha256": "bd72c70e3d1d5bdd3ec15d05014793a92dcd6c654eb32fd7f8960a69f75d79d4",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0014/",
+      "image": "catalog-images/naire-0014.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0014.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "M",
+          "scale": 1,
+          "designWidthMm": 145.19,
+          "designHeightMm": 175.64,
+          "layouts": {
+            "1": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  723.251681729125,
+                  -54.2457000000004,
+                  1134.8054,
+                  -552.1134
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  1220.9678,
+                  -54.3869999999997,
+                  1632.5214,
+                  -551.972100000001
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "14"
+    },
+    {
+      "id": "naire-0015",
+      "name": "商店風 シャンブリックサコッシュ",
+      "template": "templates/template-15.ai",
+      "templateOriginalName": "naire-0015 商店風シャンブリックサコッシュ.ai",
+      "templateSha256": "834c329a48f3d88bafe039ce48947c9899b2e6014e00fa7e142a20a91bd7abe0",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0015/",
+      "image": "catalog-images/naire-0015.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0015.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 120.0,
+          "designHeightMm": 145.17,
+          "layouts": {
+            "1": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  670.336883065866,
+                  -56.1587,
+                  1010.4943,
+                  -467.6564
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  1117.1069,
+                  -56.2754999999997,
+                  1457.2643,
+                  -467.539699999999
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "15"
+    },
+    {
+      "id": "naire-0016",
+      "name": "商店風 カレッジトート",
+      "template": "templates/template-16.ai",
+      "templateOriginalName": "naire-0016 商店風カレッジトート.ai",
+      "templateSha256": "8f3f88d0e10518447c4ad9c1ccc894bc090ef5f7a8d4ff4fe83fbdb56bcb529f",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0016/",
+      "image": "catalog-images/naire-0016.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0016.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準",
+          "scale": 1,
+          "designWidthMm": 130.0,
+          "designHeightMm": 157.26,
+          "layouts": {
+            "1": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  655.44918344196,
+                  -57.6027999999997,
+                  1023.9532,
+                  -503.392100000001
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  1125.3046,
+                  -57.7294000000002,
+                  1493.8085,
+                  -503.2655
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "16"
+    },
+    {
+      "id": "naire-0017",
+      "name": "商店風 トートバッグ（SM）",
+      "template": "templates/template-17.ai",
+      "templateOriginalName": "naire-0017 商店風トートバッグ（SM）.ai",
+      "templateSha256": "801785a49eaf52ed9790cd2f3f8e6bfdf6eaad8afe61b8b41fce9960e7e7f763",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0017/",
+      "image": "catalog-images/naire-0017.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0017.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "SM",
+          "scale": 1,
+          "designWidthMm": 130.0,
+          "designHeightMm": 157.26,
+          "layouts": {
+            "1": [
+              {
+                "central": 9,
+                "year": 10,
+                "shop": 11,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  717.931,
+                  -101.8943,
+                  1086.4349,
+                  -547.6836
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 2,
+                "year": 3,
+                "shop": 4,
+                "ring": 6,
+                "marker": null,
+                "bounds": [
+                  1212.3891,
+                  -102.0208,
+                  1580.8931,
+                  -547.557000000001
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "17"
+    },
+    {
+      "id": "naire-0018",
+      "name": "商店風 スクエアトートバッグ（L）",
+      "template": "templates/template-18.ai",
+      "templateOriginalName": "naire-0018 商店風スクエアトートバッグ（L）.ai",
+      "templateSha256": "dd4df70048b869a942244acccbf478591bab27d97da4af0e77e4bd966e9adf84",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0018/",
+      "image": "catalog-images/naire-0018.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0018.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "L",
+          "scale": 1,
+          "designWidthMm": 196.64,
+          "designHeightMm": 237.88,
+          "layouts": {
+            "1": [
+              {
+                "central": 7,
+                "year": 8,
+                "shop": 9,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  959.307375765857,
+                  -154.6863,
+                  1516.7085,
+                  -828.9895
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 0,
+                "year": 1,
+                "shop": 2,
+                "ring": 1,
+                "marker": null,
+                "bounds": [
+                  1621.4223,
+                  -154.344,
+                  2178.8242,
+                  -828.6481
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "18"
+    },
+    {
+      "id": "naire-0028",
+      "name": "商店風 ロンパース",
+      "template": "templates/template-19.ai",
+      "templateOriginalName": "naire-0028 商店風ロンパース.ai",
+      "templateSha256": "0f89aede941abdea2f716ebe6d0e9d256e856c88a7c4ec19142df5bf0f2802f6",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0028/",
+      "image": "catalog-images/naire-0028.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0028-top-1x.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "80 / 背面・胸",
+          "scale": 1,
+          "designWidthMm": 109.69,
+          "designHeightMm": 132.7,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  778.535480332539,
+                  -162.2087,
+                  1089.4734,
+                  -538.358899999999
+                ]
+              },
+              {
+                "central": 5,
+                "year": null,
+                "shop": null,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  863.138278195293,
+                  -6.11773999999969,
+                  1004.8705,
+                  -147.8499
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 10,
+                "year": 11,
+                "shop": 12,
+                "ring": 1,
+                "marker": null,
+                "bounds": [
+                  1336.5088,
+                  -160.4106,
+                  1647.4468,
+                  -536.5605
+                ]
+              },
+              {
+                "central": 0,
+                "year": null,
+                "shop": null,
+                "ring": 0,
+                "marker": null,
+                "bounds": [
+                  1421.1117,
+                  -6.11833000000024,
+                  1562.844,
+                  -147.8506
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "28"
+    },
+    {
+      "id": "naire-0035",
+      "name": "商店風 ライトナイロントート",
+      "template": "templates/template-20.ai",
+      "templateOriginalName": "naire-0035 商店風ライトナイロントート.ai",
+      "templateSha256": "19baa79cbe161159d52cffeb1b0960a4cf415b26fc3aff000109316dbd3dedb9",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0035/",
+      "image": "catalog-images/naire-0035.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/design/top-1/naire-0035.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "通常色",
+          "scale": 1,
+          "designWidthMm": 173.59,
+          "designHeightMm": 210.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 0,
+                "year": 1,
+                "shop": 2,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  991.970781747252,
+                  -194.200104724409,
+                  1484.04509401861,
+                  -789.475695275591
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 7,
+                "year": 8,
+                "shop": 9,
+                "ring": 7,
+                "marker": null,
+                "bounds": [
+                  1654.08607982941,
+                  -193.85825472441,
+                  2146.16042017059,
+                  -789.133845275592
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "003オフホワイト",
+          "scale": 1,
+          "designWidthMm": 173.59,
+          "designHeightMm": 210.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 21,
+                "year": 22,
+                "shop": 23,
+                "ring": 15,
+                "marker": null,
+                "bounds": [
+                  2423.49150167682,
+                  -162.338907458786,
+                  2915.56581394818,
+                  -757.614498009967
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 14,
+                "year": 15,
+                "shop": 16,
+                "ring": 11,
+                "marker": null,
+                "bounds": [
+                  3085.60679975898,
+                  -161.997057458786,
+                  3577.68114010016,
+                  -757.272648009966
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "35"
+    },
+    {
+      "id": "naire-0036",
+      "name": "商店風 ライトナイロンマルシェ",
+      "template": "templates/template-21.ai",
+      "templateOriginalName": "naire-0036 商店風ライトナイロンマルシェ.ai",
+      "templateSha256": "85f2b841fc445dd64afbf008fc927f7efccacf9e2d664df4487a3f007c841ab3",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0036/",
+      "image": "catalog-images/naire-0036.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/design/top-1/naire-0036.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "S / 通常色",
+          "scale": 1,
+          "designWidthMm": 173.59,
+          "designHeightMm": 210.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 36,
+                "year": 37,
+                "shop": 38,
+                "ring": 4,
+                "marker": 35,
+                "bounds": [
+                  1230.7269,
+                  1064.4666,
+                  1722.8012,
+                  469.191
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 43,
+                "year": 44,
+                "shop": 45,
+                "ring": 5,
+                "marker": 34,
+                "bounds": [
+                  1961.8422,
+                  1063.8084,
+                  2453.9165,
+                  468.532788163866
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v1",
+          "name": "S / 003オフホワイト",
+          "scale": 1,
+          "designWidthMm": 173.59,
+          "designHeightMm": 210.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 57,
+                "year": 58,
+                "shop": 59,
+                "ring": 7,
+                "marker": 33,
+                "bounds": [
+                  2801.2476,
+                  1095.3278,
+                  3293.3219,
+                  500.052187367619
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 50,
+                "year": 51,
+                "shop": 52,
+                "ring": 6,
+                "marker": 32,
+                "bounds": [
+                  3523.3629,
+                  1095.6696,
+                  4015.4372,
+                  500.394
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v2",
+          "name": "M / 通常色",
+          "scale": 1,
+          "designWidthMm": 223.19,
+          "designHeightMm": 270.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 4,
+                "year": 5,
+                "shop": 6,
+                "ring": 0,
+                "marker": 3,
+                "bounds": [
+                  1125.3736,
+                  111.056597194474,
+                  1758.0406,
+                  -654.2978
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 11,
+                "year": 12,
+                "shop": 13,
+                "ring": 1,
+                "marker": 2,
+                "bounds": [
+                  1928.6817,
+                  110.056597219736,
+                  2561.3487,
+                  -655.2978
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "v3",
+          "name": "M / 003オフホワイト",
+          "scale": 1,
+          "designWidthMm": 223.19,
+          "designHeightMm": 270.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 25,
+                "year": 26,
+                "shop": 27,
+                "ring": 3,
+                "marker": 1,
+                "bounds": [
+                  2750.1648,
+                  84.5600000000004,
+                  3382.8318,
+                  -680.7943
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 18,
+                "year": 19,
+                "shop": 20,
+                "ring": 2,
+                "marker": 0,
+                "bounds": [
+                  3561.0913,
+                  84.902,
+                  4193.7583,
+                  -680.452300000001
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "36"
+    },
+    {
+      "id": "naire-0041",
+      "name": "商店風 ハッピ",
+      "template": "templates/template-22.ai",
+      "templateOriginalName": "naire-0041 商店風ハッピ.ai",
+      "templateSha256": "cd860fa367121fe39b223a8571539ce6b22aba793ed6ae041bc25bb3c504e17a",
+      "rakutenUrl": "https://item.rakuten.co.jp/auc-taiyou-sya/naire-0041/",
+      "image": "catalog-images/naire-0041.jpg",
+      "imageSource": "https://tshop.r10s.jp/auc-taiyou-sya/cabinet/naire-1/new/top-1/naire-0041.jpg?fitin=128:128",
+      "variants": [
+        {
+          "id": "v0",
+          "name": "標準 / 背面・襟",
+          "scale": 1,
+          "designWidthMm": 330.65,
+          "designHeightMm": 400.0,
+          "layouts": {
+            "1": [
+              {
+                "central": 13,
+                "year": 14,
+                "shop": 15,
+                "ring": 4,
+                "marker": null,
+                "bounds": [
+                  2605.36039203417,
+                  832.24395245246,
+                  3542.64478623427,
+                  -301.614315264076
+                ]
+              }
+            ],
+            "2": [
+              {
+                "central": 6,
+                "year": 7,
+                "shop": 8,
+                "ring": 3,
+                "marker": null,
+                "bounds": [
+                  2585.07817715585,
+                  3482.60104843838,
+                  3522.36257135596,
+                  2348.74278072184
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "printId": "41",
+      "collarFrames": [
+        0,
+        1
+      ]
+    }
+  ],
+  "retrievedDate": "2026-10-14"
+}
