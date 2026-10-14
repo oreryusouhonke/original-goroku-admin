@@ -22,6 +22,11 @@ body {
 
 .shell { min-height: 100vh; padding: 18px; }
 
+.app-links { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; max-width: 1540px; margin: 0 auto 18px; }
+.naire-launch { display: inline-block; padding: 13px 18px; border-radius: 6px; background: var(--gold); color: #17110d; text-decoration: none; font-size: 16px; font-weight: 800; }
+.naire-launch:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+.app-links span { color: var(--muted); font-size: 13px; }
+
 .workspace {
   display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
